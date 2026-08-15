@@ -1,0 +1,11 @@
+name = "empower-design-admin"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+# ADMIN_PASSWORD / GITHUB_TOKEN / GITHUB_OWNER / GITHUB_REPO / GITHUB_BRANCH 는
+# 이 파일에 적지 말고 아래 명령으로 등록하세요 (평문으로 저장/커밋되지 않도록):
+#   wrangler secret put ADMIN_PASSWORD
+#   wrangler secret put GITHUB_TOKEN
+#   wrangler secret put GITHUB_OWNER
+#   wrangler secret put GITHUB_REPO
+#   wrangler secret put GITHUB_BRANCH
