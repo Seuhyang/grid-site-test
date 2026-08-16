@@ -25,15 +25,16 @@
   .group-header{ padding:24px 16px 4px; }
 }
 
-/* 그룹 페이지는 메인 화면과 같은 비율(4:5, 정렬된 그리드 느낌)을 유지하되,
-   칸 수를 줄여서(2단) 사진 한 장 한 장이 더 넓게 보이게 합니다.
+/* 그룹 페이지는 메인 화면과 같은 비율(4:5, 정렬된 느낌)을 유지하되,
+   한 줄에 한 장씩만 놓아서 사진 한 장 한 장을 넓게 씁니다.
+   (컨테이너 폭 자체는 예전 2단일 때와 동일 - 사진이 그 폭 전체를 씀)
    아래로 계속 스크롤하며 볼 수 있습니다. */
 @media (min-width:900px){
   main.gallery{
     max-width:1200px;
     margin:0 auto;
     display:grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap:2px;
     background:var(--line);
   }

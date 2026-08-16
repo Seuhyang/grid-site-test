@@ -8,12 +8,12 @@
 */
 
 // 상단 메뉴 항목. href는 각 메뉴가 실제 연결될 페이지가 생기면 채워주세요.
+// '상담문의'는 여기 목록이 아니라 아래에서 아이콘 두 개와 한 묶음으로 따로 그려집니다.
 const NAV_ITEMS = [
   { label: '메인', hrefKey: 'home' },
   { label: '회사 소개', href: '#' },
   { label: '간판 종류', href: '#' },
   { label: '시공 사례', href: '#' },
-  { label: '상담문의', href: '#' },
 ];
 
 // 카카오채널 링크는 나중에 만들어지면 이 값만 채워 넣으면 자동으로 활성화됩니다.
@@ -45,12 +45,22 @@ function initSiteNav({ homeHref, activeKey }){
     ul.appendChild(li);
   });
 
-  // 카카오채널 / 인스타그램 아이콘
+  // '상담문의' + 카카오채널 + 인스타그램: 시각적으로 한 묶음.
+  // 상담문의는 아직 이동할 페이지가 없어 클릭해도 아무 동작 안 하게 둡니다.
+  const contactLi = document.createElement('li');
+  contactLi.className = 'nav-contact-group';
+
+  const contactLabel = document.createElement('a');
+  contactLabel.href = '#';
+  contactLabel.textContent = '상담문의';
+  contactLabel.addEventListener('click', (e) => e.preventDefault());
+
+  contactLi.appendChild(contactLabel);
+
   [
     { key: 'kakao', label: '카카오톡 채널', href: SOCIAL_LINKS.kakaoChannel },
     { key: 'instagram', label: '인스타그램', href: SOCIAL_LINKS.instagram },
   ].forEach(social => {
-    const li = document.createElement('li');
     const a = document.createElement('a');
     a.className = 'nav-icon';
     a.innerHTML = ICONS[social.key];
@@ -65,10 +75,10 @@ function initSiteNav({ homeHref, activeKey }){
       a.setAttribute('aria-disabled', 'true');
       a.addEventListener('click', (e) => e.preventDefault());
     }
-    li.appendChild(a);
-    ul.appendChild(li);
+    contactLi.appendChild(a);
   });
 
+  ul.appendChild(contactLi);
   menuEl.appendChild(ul);
 }
 

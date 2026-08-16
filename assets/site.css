@@ -68,6 +68,17 @@ nav.menu a.nav-icon:hover{ opacity:1; color:var(--accent); }
 nav.menu a.nav-icon::after{ display:none; } /* 아이콘 밑줄 효과는 제외 */
 nav.menu a.nav-icon.is-disabled{ opacity:0.3; cursor:default; pointer-events:none; }
 
+nav.menu li.nav-contact-group{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding-left:18px;
+  margin-left:4px;
+  border-left:1px solid var(--line);
+}
+nav.menu li.nav-contact-group a{ padding:6px 0; }
+nav.menu li.nav-contact-group a:not(.nav-icon)::after{ display:none; } /* 상담문의는 밑줄 강조 없음(비활성) */
+
 @media (max-width:480px){
   header.site-nav{ padding:0 16px; }
   .brand .word-empower{ font-size:18px; }

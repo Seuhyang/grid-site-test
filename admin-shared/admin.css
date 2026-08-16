@@ -1,0 +1,41 @@
+/* /admin-shared/admin.css
+   관리자 페이지(admin-a, admin-b) 공통 스타일 */
+:root{ --ink:#131211; --paper:#faf9f6; --line:#e2ded4; --muted:#8a8478; --accent:#3b4b6b; }
+*{ box-sizing:border-box; }
+body{ margin:0; background:var(--paper); color:var(--ink); font-family:'Work Sans',sans-serif; }
+header{ padding:20px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+header .brand{ font-family:'Baloo 2',sans-serif; font-weight:800; color:#e2431f; }
+header .badge{ font-size:12px; color:var(--muted); }
+main{ max-width:900px; margin:0 auto; padding:24px; }
+section{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:20px; }
+h2{ font-size:15px; margin:0 0 14px; }
+label{ display:block; font-size:12px; color:var(--muted); margin-bottom:4px; }
+input[type=text], input[type=password], textarea{
+  width:100%; padding:9px 10px; border:1px solid var(--line); border-radius:6px;
+  font-size:14px; margin-bottom:12px; font-family:inherit;
+}
+textarea{ min-height:90px; resize:vertical; line-height:1.6; }
+button{
+  background:var(--ink); color:#fff; border:none; border-radius:6px;
+  padding:9px 16px; font-size:13px; cursor:pointer; font-family:inherit;
+}
+button.secondary{ background:transparent; color:var(--ink); border:1px solid var(--line); }
+button:disabled{ opacity:0.5; cursor:not-allowed; }
+#adminArea{ display:none; }
+.group-card{ display:flex; gap:16px; padding:14px 0; border-bottom:1px solid var(--line); align-items:flex-start; }
+.group-card:last-child{ border-bottom:none; }
+.group-card img.cover{ width:96px; height:120px; object-fit:cover; border-radius:6px; background:var(--line); flex-shrink:0; }
+.group-card .fields{ flex:1; min-width:0; }
+.group-card .photo-list{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
+.group-card .photo-list .thumb{ position:relative; }
+.group-card .photo-list img{ width:52px; height:65px; object-fit:cover; border-radius:4px; }
+.group-card .photo-list .del{
+  position:absolute; top:-6px; right:-6px; background:#c0392b; color:#fff;
+  border-radius:50%; width:18px; height:18px; font-size:11px; line-height:18px;
+  text-align:center; padding:0; cursor:pointer;
+}
+select{ padding:6px; border-radius:6px; border:1px solid var(--line); font-family:inherit; }
+.status{ font-size:12px; color:var(--muted); margin-top:8px; white-space:pre-wrap; }
+.status.error{ color:#c0392b; }
+.status.ok{ color:#2c7a3f; }
+.hint{ font-size:12px; color:var(--muted); line-height:1.6; }
