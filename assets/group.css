@@ -1,0 +1,101 @@
+/* /assets/group.css
+   그룹 페이지(group/<slug>/index.html)에만 쓰이는 스타일:
+   제목 영역, 본문 글, 라이트박스(팝업) */
+.group-header{
+  padding:40px 28px 8px;
+  max-width:1400px;
+  margin:0 auto;
+}
+.group-header .back-link{
+  display:inline-block;
+  font-size:12px;
+  letter-spacing:0.06em;
+  color:var(--muted);
+  margin-bottom:14px;
+}
+.group-header .back-link:hover{ color:var(--ink); }
+.group-header h1{
+  font-family:'Fraunces', serif;
+  font-weight:400;
+  font-style:italic;
+  font-size:clamp(22px, 4vw, 32px);
+  margin:0 0 12px;
+}
+@media (max-width:480px){
+  .group-header{ padding:24px 16px 4px; }
+}
+
+/* 그룹 페이지는 메인 화면과 같은 비율(4:5, 정렬된 그리드 느낌)을 유지하되,
+   칸 수를 줄여서(2단) 사진 한 장 한 장이 더 넓게 보이게 합니다.
+   아래로 계속 스크롤하며 볼 수 있습니다. */
+@media (min-width:900px){
+  main.gallery{
+    max-width:1200px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:2px;
+    background:var(--line);
+  }
+  .gallery-item{ aspect-ratio: 4 / 5; border-bottom:none; }
+  .gallery-item img{ width:100%; height:100%; object-fit:cover; }
+}
+
+/* 본문 글 (사진 사이사이 자유 배치) */
+p.content-text{
+  max-width:720px;
+  margin:0 auto;
+  padding:28px 24px;
+  font-size:15px;
+  line-height:1.8;
+  color:var(--ink);
+  white-space:pre-line;
+}
+@media (max-width:480px){
+  p.content-text{ padding:22px 16px; font-size:14.5px; }
+}
+@media (min-width:900px){
+  p.content-text{
+    grid-column: 1 / -1;   /* 그리드 한 줄 전체를 차지 - 사진 칸에 안 끼임 */
+    background:var(--paper);
+    padding:36px 24px;
+  }
+}
+
+/* 라이트박스(팝업) */
+.lightbox{
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(19,18,17,0.97);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .25s ease;
+}
+.lightbox.is-open{ opacity:1; pointer-events:auto; }
+.lightbox img{
+  max-width:min(92vw, 900px);
+  max-height:82vh;
+  width:auto; height:auto;
+  object-fit:contain;
+  user-select:none; -webkit-user-select:none;
+}
+.lightbox .lb-close,
+.lightbox .lb-prev,
+.lightbox .lb-next{
+  position:absolute; background:transparent; border:none;
+  color:#f2f0ea; cursor:pointer; padding:12px; line-height:0;
+  opacity:0.75; transition:opacity .2s ease;
+}
+.lightbox .lb-close:hover,
+.lightbox .lb-prev:hover,
+.lightbox .lb-next:hover{ opacity:1; }
+.lightbox .lb-close{ top:14px; right:14px; }
+.lightbox .lb-prev{ left:6px; top:50%; transform:translateY(-50%); }
+.lightbox .lb-next{ right:6px; top:50%; transform:translateY(-50%); }
+.lightbox .lb-prev svg,
+.lightbox .lb-next svg,
+.lightbox .lb-close svg{ width:26px; height:26px; }
+
+@media (max-width:767px){
+  .lightbox .lb-prev, .lightbox .lb-next{ display:none; }
+  .lightbox img{ max-width:100%; width:100%; max-height:100vh; }
+}

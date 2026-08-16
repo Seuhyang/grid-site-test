@@ -1,0 +1,32 @@
+/* /assets/index.css
+   메인 화면(index.html)에만 쓰이는 스타일 */
+
+/* 데스크톱: 정렬된 그리드 (3~4단) */
+@media (min-width:900px){
+  main.gallery{
+    max-width:1400px; margin:0 auto;
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    gap:2px; background:var(--line);
+  }
+  .gallery-item{ aspect-ratio: 4 / 5; border-bottom:none; }
+  .gallery-item img{ width:100%; height:100%; object-fit:cover; }
+}
+@media (min-width:1400px){
+  main.gallery{ grid-template-columns: repeat(4, 1fr); }
+}
+
+/* 그리드 위 마우스오버 타이틀 */
+.gallery-item .tile-title{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:24px;
+  background:rgba(19,18,17,0.45);
+  color:#faf9f6;
+  font-family:'Fraunces', serif; font-style:italic; font-weight:300;
+  font-size:18px; letter-spacing:0.02em;
+  opacity:0; transition:opacity .25s ease;
+  pointer-events:none;
+}
+@media (hover:hover) and (pointer:fine){
+  .gallery-item:hover .tile-title{ opacity:1; }
+}

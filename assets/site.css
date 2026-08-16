@@ -1,0 +1,77 @@
+/* /assets/site.css
+   메인(index.html)과 그룹 페이지(group/<slug>/index.html)가 공통으로 쓰는
+   기본 톤/헤더/내비게이션 스타일입니다. */
+:root{
+  --ink:#131211;
+  --paper:#faf9f6;
+  --line:#e2ded4;
+  --muted:#8a8478;
+  --accent:#3b4b6b;
+  --nav-h: 64px;
+}
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans', sans-serif;
+  -webkit-font-smoothing:antialiased;
+}
+img{ display:block; max-width:100%; }
+a{ color:inherit; text-decoration:none; }
+
+header.site-nav{
+  position:sticky; top:0; z-index:100;
+  height:var(--nav-h);
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 28px;
+  background:rgba(250,249,246,0.86);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.brand{ display:flex; align-items:baseline; gap:8px; line-height:1; }
+.brand .word-empower{
+  font-family:'Baloo 2', sans-serif;
+  font-weight:800; font-size:22px;
+  color:#e2431f;
+  -webkit-text-stroke:1px #7a1f10;
+  letter-spacing:0.01em;
+}
+.brand .word-design{
+  font-family:'Baloo 2', sans-serif;
+  font-weight:700; font-size:12px;
+  letter-spacing:0.18em;
+  color:var(--ink);
+}
+nav.menu ul{ list-style:none; display:flex; gap:28px; margin:0; padding:0; }
+nav.menu a{
+  font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+  color:var(--ink); padding:6px 2px; position:relative;
+}
+nav.menu a::after{
+  content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+  background:var(--accent); transform:scaleX(0); transform-origin:right;
+  transition:transform .25s ease;
+}
+nav.menu a:hover::after, nav.menu a.active::after{ transform:scaleX(1); transform-origin:left; }
+nav.menu a.active{ color:var(--accent); }
+
+nav.menu a.nav-icon{
+  display:flex; align-items:center; justify-content:center;
+  width:28px; height:28px;
+  color:var(--ink);
+  opacity:0.75;
+  transition:opacity .2s ease, color .2s ease;
+}
+nav.menu a.nav-icon:hover{ opacity:1; color:var(--accent); }
+nav.menu a.nav-icon::after{ display:none; } /* 아이콘 밑줄 효과는 제외 */
+nav.menu a.nav-icon.is-disabled{ opacity:0.3; cursor:default; pointer-events:none; }
+
+@media (max-width:480px){
+  header.site-nav{ padding:0 16px; }
+  .brand .word-empower{ font-size:18px; }
+  .brand .word-design{ font-size:10px; }
+  nav.menu ul{ gap:16px; }
+  nav.menu a{ font-size:11.5px; }
+}
