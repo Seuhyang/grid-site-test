@@ -51,7 +51,7 @@ function initSiteNav({ homeHref, activeKey }){
   contactLi.className = 'nav-contact-group';
 
   const contactLabel = document.createElement('a');
-  contactLabel.href = '#';
+  // contactLabel.href = '#';
   contactLabel.textContent = '상담문의';
   contactLabel.addEventListener('click', (e) => e.preventDefault());
 
