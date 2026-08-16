@@ -30,18 +30,18 @@ header.site-nav{
   -webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
 }
-.brand{ display:flex; align-items:baseline; gap:8px; line-height:1; }
+.brand{ display:flex; align-items:center; gap:9px; line-height:1; }
 .brand .word-empower{
-  font-family:'Baloo 2', sans-serif;
-  font-weight:800; font-size:22px;
-  color:#e2431f;
-  -webkit-text-stroke:1px #7a1f10;
+  font-family:'Yellowtail', cursive;
+  font-weight:400; font-size:30px;
+  color:#dfa23f;
+  text-shadow: 1px 1px 0 #52290f;
   letter-spacing:0.01em;
 }
 .brand .word-design{
-  font-family:'Baloo 2', sans-serif;
-  font-weight:700; font-size:12px;
-  letter-spacing:0.18em;
+  font-family:'Oswald', sans-serif;
+  font-weight:700; font-size:11px;
+  letter-spacing:0.32em;
   color:var(--ink);
 }
 nav.menu ul{ list-style:none; display:flex; gap:28px; margin:0; padding:0; }
@@ -81,8 +81,8 @@ nav.menu li.nav-contact-group a:not(.nav-icon)::after{ display:none; } /* 상담
 
 @media (max-width:480px){
   header.site-nav{ padding:0 16px; }
-  .brand .word-empower{ font-size:18px; }
-  .brand .word-design{ font-size:10px; }
+  .brand .word-empower{ font-size:22px; }
+  .brand .word-design{ font-size:9px; }
   nav.menu ul{ gap:16px; }
   nav.menu a{ font-size:11.5px; }
 }
