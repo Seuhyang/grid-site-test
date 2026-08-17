@@ -55,7 +55,10 @@ function renderGroup(group){
 function getSlugFromLocation(){
   const parts = location.pathname.split('/').filter(p => p && p !== 'index.html');
   const fromPath = parts[parts.length - 1];
-  if (fromPath && fromPath !== 'group') return fromPath;
+  if (fromPath && fromPath !== 'group') {
+    // 브라우저/환경에 따라 %20 같은 인코딩이 그대로 남아있는 경우가 있어 디코딩해줍니다.
+    try { return decodeURIComponent(fromPath); } catch { return fromPath; }
+  }
   return new URLSearchParams(location.search).get('g');
 }
 

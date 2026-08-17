@@ -35,6 +35,17 @@ jobs:
           # 카카오톡 같은 배치 저장 패턴: 이름_01.jpg, 이름_02.jpg ...
           BATCH_SUFFIX_RE = re.compile(r"^(.*?)(?:_\d{2})?$")
 
+          def slugify(text: str) -> str:
+              """파일명을 주소(URL)에 안전한 형태로 변환합니다.
+              - 공백 -> 하이픈, 영문 대문자 -> 소문자, 한글은 그대로 유지
+              - 관리자 페이지가 아니라 GitHub에 직접 파일을 올렸을 때(파일명에
+                공백/대문자가 섞여도) 주소가 항상 안전하게 나오도록 하는 안전장치"""
+              text = re.sub(r"\s+", "-", text.strip())
+              text = re.sub(r"[^\w\-]", "", text)
+              text = text.lower()
+              text = re.sub(r"-+", "-", text).strip("-_")
+              return text or "group"
+
           def first_commit_date(path: str) -> str:
               """해당 파일이 저장소에 처음 추가된 커밋 시각(ISO 8601)을 반환. 못 찾으면 지금 시각."""
               try:
@@ -62,9 +73,20 @@ jobs:
               groups.setdefault(base, []).append({"file": name, "date": date})
 
           result = []
+          used_slugs = set()
           for base, photos in groups.items():
               photos.sort(key=lambda p: p["file"])
               group_date = min(p["date"] for p in photos)
+
+              # base(원본 파일명)는 계속 사이드카 파일(.title.txt 등) 찾는 열쇠로 쓰고,
+              # 실제 주소(slug)는 공백/대문자 등을 정리한 안전한 값을 씁니다.
+              slug_candidate = slugify(base)
+              slug = slug_candidate
+              n = 2
+              while slug in used_slugs:
+                  slug = f"{slug_candidate}-{n}"
+                  n += 1
+              used_slugs.add(slug)
 
               title_file = IMAGES_DIR / f"{base}.title.txt"
               if title_file.exists():
@@ -79,12 +101,64 @@ jobs:
                   if any(p["file"] == wanted for p in photos):
                       cover = wanted
 
+              desc_file = IMAGES_DIR / f"{base}.desc.txt"
+              content_file = IMAGES_DIR / f"{base}.content.txt"
+              photo_files = [p["file"] for p in photos]
+
+              # blocks: 화면에 위에서 아래로 그려질 순서 그대로의 글/사진 목록
+              blocks = []
+
+              if content_file.exists():
+                  # <base>.content.txt 안에서 {{파일명}} 으로 사진 위치를 직접 지정
+                  text_buffer = []
+                  referenced = set()
+
+                  def flush_text():
+                      if text_buffer:
+                          text = "\n".join(text_buffer).strip("\n")
+                          if text.strip():
+                              blocks.append({"type": "text", "text": text})
+                          text_buffer.clear()
+
+                  photo_tag_re = re.compile(r"^\{\{(.+?)\}\}$")
+                  for line in content_file.read_text(encoding="utf-8").splitlines():
+                      stripped = line.strip()
+                      m = photo_tag_re.match(stripped)
+                      if m and m.group(1) in photo_files:
+                          flush_text()
+                          blocks.append({"type": "image", "file": m.group(1)})
+                          referenced.add(m.group(1))
+                      elif stripped == "":
+                          flush_text()
+                      else:
+                          text_buffer.append(line)
+                  flush_text()
+
+                  # 본문에서 언급 안 된 사진은 맨 뒤에 자동으로 붙여서 안 사라지게 함
+                  for file in photo_files:
+                      if file not in referenced:
+                          blocks.append({"type": "image", "file": file})
+
+              elif desc_file.exists():
+                  # 예전 방식(설명 글 한 덩어리 + 사진 전부 아래) 그대로 지원
+                  text = desc_file.read_text(encoding="utf-8").strip()
+                  if text:
+                      blocks.append({"type": "text", "text": text})
+                  for file in photo_files:
+                      blocks.append({"type": "image", "file": file})
+
+              else:
+                  # 아무 글도 없으면 사진들만
+                  for file in photo_files:
+                      blocks.append({"type": "image", "file": file})
+
               result.append({
-                  "slug": base,
+                  "slug": slug,
                   "title": title,
                   "date": group_date,
                   "cover": cover,
-                  "photos": [p["file"] for p in photos],
+                  "photos": photo_files,
+                  "blocks": blocks,
               })
 
           with open(IMAGES_DIR / "manifest.json", "w", encoding="utf-8") as f:
