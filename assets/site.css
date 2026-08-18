@@ -79,10 +79,64 @@ nav.menu li.nav-contact-group{
 nav.menu li.nav-contact-group a{ padding:6px 0; }
 nav.menu li.nav-contact-group a:not(.nav-icon)::after{ display:none; } /* 상담문의는 밑줄 강조 없음(비활성) */
 
-@media (max-width:480px){
+/* 모바일 햄버거 버튼 - 넓은 화면에서는 숨김 */
+.nav-toggle{
+  display:none;
+  background:none; border:none; padding:6px; margin:0;
+  color:var(--ink); cursor:pointer;
+}
+.nav-toggle svg{ width:22px; height:22px; display:block; }
+
+/* 680px 이하: 가로로 나열하지 않고, 버튼을 눌러야 열리는 세로 드롭다운 메뉴로 전환.
+   글자 사이에 공백이 없는 한글 메뉴명이 좁은 화면에서 한 글자씩 줄바꿈되는 것을 막습니다. */
+@media (max-width:680px){
   header.site-nav{ padding:0 16px; }
   .brand .word-empower{ font-size:22px; }
   .brand .word-design{ font-size:9px; }
-  nav.menu ul{ gap:16px; }
-  nav.menu a{ font-size:11.5px; }
+
+  .nav-toggle{ display:flex; align-items:center; justify-content:center; }
+
+  nav.menu{ position:static; }
+  nav.menu ul{
+    display:none;
+    flex-direction:column;
+    align-items:stretch;
+    gap:0;
+    position:absolute;
+    top:var(--nav-h);
+    left:0; right:0;
+    margin:0;
+    padding:8px 16px 18px;
+    background:var(--paper);
+    border-bottom:1px solid var(--line);
+    box-shadow:0 12px 20px -12px rgba(19,18,17,0.15);
+  }
+  nav.menu.is-open ul{ display:flex; }
+
+  nav.menu ul li{ width:100%; }
+  nav.menu ul li a{
+    display:block;
+    width:100%;
+    padding:14px 2px;
+    font-size:14px;
+    white-space:normal;
+    border-bottom:1px solid var(--line);
+  }
+  nav.menu ul li:last-child a{ border-bottom:none; }
+  nav.menu a::after{ display:none; } /* 드롭다운 안에서는 밑줄 강조 효과 생략 */
+
+  nav.menu li.nav-contact-group{
+    flex-direction:row;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    border-left:none;
+    border-bottom:none;
+    padding-left:2px;
+    margin-left:0;
+    margin-top:6px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  nav.menu li.nav-contact-group a{ width:auto; border-bottom:none; padding:6px 0; }
 }

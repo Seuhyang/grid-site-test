@@ -33,6 +33,16 @@ function initSiteNav({ homeHref, activeKey }){
   if (brandEl) brandEl.setAttribute('href', homeHref);
   if (!menuEl) return;
 
+  // 모바일 전용 햄버거 버튼 - 넓은 화면에서는 CSS로 숨겨집니다.
+  const toggleBtn = document.createElement('button');
+  toggleBtn.type = 'button';
+  toggleBtn.className = 'nav-toggle';
+  toggleBtn.setAttribute('aria-label', '메뉴 열기/닫기');
+  toggleBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h16"/></svg>`;
+  toggleBtn.addEventListener('click', () => {
+    menuEl.classList.toggle('is-open');
+  });
+
   const ul = document.createElement('ul');
 
   NAV_ITEMS.forEach(item => {
@@ -51,7 +61,7 @@ function initSiteNav({ homeHref, activeKey }){
   contactLi.className = 'nav-contact-group';
 
   const contactLabel = document.createElement('a');
-  // contactLabel.href = '#';
+  contactLabel.href = '#';
   contactLabel.textContent = '상담문의';
   contactLabel.addEventListener('click', (e) => e.preventDefault());
 
@@ -79,6 +89,13 @@ function initSiteNav({ homeHref, activeKey }){
   });
 
   ul.appendChild(contactLi);
+
+  // 모바일에서 항목 하나를 탭하면 메뉴가 자동으로 닫히게
+  ul.addEventListener('click', (e) => {
+    if (e.target.closest('a')) menuEl.classList.remove('is-open');
+  });
+
+  menuEl.appendChild(toggleBtn);
   menuEl.appendChild(ul);
 }
 
