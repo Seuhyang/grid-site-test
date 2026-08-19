@@ -2,6 +2,7 @@
   "groups": [
     {
       "slug": "aiola-flower",
+      "key": "AIOLA FLOWER",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "AIOLA FLOWER.jpg",
@@ -17,6 +18,7 @@
     },
     {
       "slug": "anduril",
+      "key": "ANDURIL",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "ANDURIL.jpg",
@@ -32,6 +34,7 @@
     },
     {
       "slug": "iceberg",
+      "key": "ICEBERG",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "ICEBERG.jpg",
@@ -47,6 +50,7 @@
     },
     {
       "slug": "jjin-tanning",
+      "key": "JJIN TANNING",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "JJIN TANNING.jpg",
@@ -62,6 +66,7 @@
     },
     {
       "slug": "kundalgongmyoung-popup",
+      "key": "KUNDAL&GONGMYOUNG POPUP",
       "title": "KUNDAL&GONGMYOUNG POPUP",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "KUNDAL&GONGMYOUNG POPUP_01.jpg",
@@ -82,6 +87,7 @@
     },
     {
       "slug": "kakaotalk_20260814_221616178",
+      "key": "KakaoTalk_20260814_221616178",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "KakaoTalk_20260814_221616178_02.jpg",
@@ -97,6 +103,7 @@
     },
     {
       "slug": "mancheon508",
+      "key": "MANCHEON508",
       "title": "MANCHEON508",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "MANCHEON508.jpg",
@@ -112,6 +119,7 @@
     },
     {
       "slug": "mb3",
+      "key": "MB3",
       "title": "MB3",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "MB3.jpg",
@@ -127,6 +135,7 @@
     },
     {
       "slug": "mood",
+      "key": "MOOD",
       "title": "MOOD",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "MOOD.jpg",
@@ -142,6 +151,7 @@
     },
     {
       "slug": "often",
+      "key": "OFTEN",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "OFTEN.jpg",
@@ -157,6 +167,7 @@
     },
     {
       "slug": "sesung",
+      "key": "SESUNG",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "SESUNG.jpg",
@@ -172,6 +183,7 @@
     },
     {
       "slug": "skin-fiting-solution",
+      "key": "SKIN FITING SOLUTION",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "SKIN FITING SOLUTION.jpg",
@@ -187,6 +199,7 @@
     },
     {
       "slug": "xerf-moment",
+      "key": "XERF MOMENT",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "XERF MOMENT.jpg",
@@ -202,6 +215,7 @@
     },
     {
       "slug": "가온바",
+      "key": "가온바",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "가온바.jpg",
@@ -217,6 +231,7 @@
     },
     {
       "slug": "개성주악",
+      "key": "개성주악",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "개성주악.jpg",
@@ -232,6 +247,7 @@
     },
     {
       "slug": "곱상",
+      "key": "곱상",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "곱상.jpg",
@@ -247,6 +263,7 @@
     },
     {
       "slug": "관광기업지원센터",
+      "key": "관광기업지원센터",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "관광기업지원센터.jpg",
@@ -262,6 +279,7 @@
     },
     {
       "slug": "내가찜한닭",
+      "key": "내가찜한닭",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "내가찜한닭.jpg",
@@ -277,6 +295,7 @@
     },
     {
       "slug": "노치",
+      "key": "노치",
       "title": "노치",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "노치_02.jpg",
@@ -302,6 +321,7 @@
     },
     {
       "slug": "버터문래",
+      "key": "버터문래",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "버터문래.jpg",
@@ -317,6 +337,7 @@
     },
     {
       "slug": "송추가마골-어반점",
+      "key": "송추가마골 어반점",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "송추가마골 어반점.jpg",
@@ -332,6 +353,7 @@
     },
     {
       "slug": "아트-인-핸즈",
+      "key": "아트 인 핸즈",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "아트 인 핸즈.jpg",
@@ -347,6 +369,7 @@
     },
     {
       "slug": "애육당",
+      "key": "애육당",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "애육당.jpg",
@@ -362,6 +385,7 @@
     },
     {
       "slug": "우태하-한승경-비부과",
+      "key": "우태하 한승경 비부과",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "우태하 한승경 비부과.jpg",
@@ -377,6 +401,7 @@
     },
     {
       "slug": "창문이앤씨",
+      "key": "창문이앤씨",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "창문이앤씨.jpg",
@@ -392,6 +417,7 @@
     },
     {
       "slug": "휴대폰할인매장",
+      "key": "휴대폰할인매장",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "휴대폰할인매장.jpg",
