@@ -1,121 +1,203 @@
 {
   "groups": [
     {
-      "slug": "AIOLA FLOWER",
+      "slug": "aiola-flower",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "AIOLA FLOWER.jpg",
       "photos": [
         "AIOLA FLOWER.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "AIOLA FLOWER.jpg"
+        }
       ]
     },
     {
-      "slug": "ANDURIL",
+      "slug": "anduril",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "ANDURIL.jpg",
       "photos": [
         "ANDURIL.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "ANDURIL.jpg"
+        }
       ]
     },
     {
-      "slug": "ICEBERG",
+      "slug": "iceberg",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "ICEBERG.jpg",
       "photos": [
         "ICEBERG.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "ICEBERG.jpg"
+        }
       ]
     },
     {
-      "slug": "JJIN TANNING",
+      "slug": "jjin-tanning",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "JJIN TANNING.jpg",
       "photos": [
         "JJIN TANNING.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "JJIN TANNING.jpg"
+        }
       ]
     },
     {
-      "slug": "KUNDAL&GONGMYOUNG POPUP",
-      "title": "2026.08.16",
+      "slug": "kundalgongmyoung-popup",
+      "title": "KUNDAL&GONGMYOUNG POPUP",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "KUNDAL&GONGMYOUNG POPUP_01.jpg",
       "photos": [
         "KUNDAL&GONGMYOUNG POPUP_01.jpg",
         "KUNDAL&GONGMYOUNG POPUP_02.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "KUNDAL&GONGMYOUNG POPUP_01.jpg"
+        },
+        {
+          "type": "image",
+          "file": "KUNDAL&GONGMYOUNG POPUP_02.jpg"
+        }
       ]
     },
     {
-      "slug": "KakaoTalk_20260814_221616178",
+      "slug": "kakaotalk_20260814_221616178",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "KakaoTalk_20260814_221616178_02.jpg",
       "photos": [
         "KakaoTalk_20260814_221616178_02.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "KakaoTalk_20260814_221616178_02.jpg"
+        }
       ]
     },
     {
-      "slug": "MANCHEON508",
-      "title": "2026.08.16",
+      "slug": "mancheon508",
+      "title": "MANCHEON508",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "MANCHEON508.jpg",
       "photos": [
         "MANCHEON508.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "MANCHEON508.jpg"
+        }
       ]
     },
     {
-      "slug": "MB3",
-      "title": "2026.08.16",
+      "slug": "mb3",
+      "title": "MB3",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "MB3.jpg",
       "photos": [
         "MB3.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "MB3.jpg"
+        }
       ]
     },
     {
-      "slug": "MOOD",
-      "title": "2026.08.16",
+      "slug": "mood",
+      "title": "MOOD",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "MOOD.jpg",
       "photos": [
         "MOOD.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "MOOD.jpg"
+        }
       ]
     },
     {
-      "slug": "OFTEN",
+      "slug": "often",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "OFTEN.jpg",
       "photos": [
         "OFTEN.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "OFTEN.jpg"
+        }
       ]
     },
     {
-      "slug": "SESUNG",
+      "slug": "sesung",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "SESUNG.jpg",
       "photos": [
         "SESUNG.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "SESUNG.jpg"
+        }
       ]
     },
     {
-      "slug": "SKIN FITING SOLUTION",
+      "slug": "skin-fiting-solution",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "SKIN FITING SOLUTION.jpg",
       "photos": [
         "SKIN FITING SOLUTION.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "SKIN FITING SOLUTION.jpg"
+        }
       ]
     },
     {
-      "slug": "XERF MOMENT",
+      "slug": "xerf-moment",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "XERF MOMENT.jpg",
       "photos": [
         "XERF MOMENT.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "XERF MOMENT.jpg"
+        }
       ]
     },
     {
@@ -125,6 +207,12 @@
       "cover": "가온바.jpg",
       "photos": [
         "가온바.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "가온바.jpg"
+        }
       ]
     },
     {
@@ -134,6 +222,12 @@
       "cover": "개성주악.jpg",
       "photos": [
         "개성주악.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "개성주악.jpg"
+        }
       ]
     },
     {
@@ -143,6 +237,12 @@
       "cover": "곱상.jpg",
       "photos": [
         "곱상.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "곱상.jpg"
+        }
       ]
     },
     {
@@ -152,6 +252,12 @@
       "cover": "관광기업지원센터.jpg",
       "photos": [
         "관광기업지원센터.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "관광기업지원센터.jpg"
+        }
       ]
     },
     {
@@ -161,17 +267,37 @@
       "cover": "내가찜한닭.jpg",
       "photos": [
         "내가찜한닭.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "내가찜한닭.jpg"
+        }
       ]
     },
     {
       "slug": "노치",
-      "title": "2026.08.16",
+      "title": "노치",
       "date": "2026-08-16T11:21:59+09:00",
-      "cover": "노치_01.jpg",
+      "cover": "노치_02.jpg",
       "photos": [
         "노치_01.jpg",
         "노치_02.jpg",
         "노치_03.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "노치_01.jpg"
+        },
+        {
+          "type": "image",
+          "file": "노치_02.jpg"
+        },
+        {
+          "type": "image",
+          "file": "노치_03.jpg"
+        }
       ]
     },
     {
@@ -181,24 +307,42 @@
       "cover": "버터문래.jpg",
       "photos": [
         "버터문래.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "버터문래.jpg"
+        }
       ]
     },
     {
-      "slug": "송추가마골 어반점",
+      "slug": "송추가마골-어반점",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "송추가마골 어반점.jpg",
       "photos": [
         "송추가마골 어반점.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "송추가마골 어반점.jpg"
+        }
       ]
     },
     {
-      "slug": "아트 인 핸즈",
+      "slug": "아트-인-핸즈",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "아트 인 핸즈.jpg",
       "photos": [
         "아트 인 핸즈.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "아트 인 핸즈.jpg"
+        }
       ]
     },
     {
@@ -208,15 +352,27 @@
       "cover": "애육당.jpg",
       "photos": [
         "애육당.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "애육당.jpg"
+        }
       ]
     },
     {
-      "slug": "우태하 한승경 비부과",
+      "slug": "우태하-한승경-비부과",
       "title": "2026.08.16",
       "date": "2026-08-16T11:21:59+09:00",
       "cover": "우태하 한승경 비부과.jpg",
       "photos": [
         "우태하 한승경 비부과.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "우태하 한승경 비부과.jpg"
+        }
       ]
     },
     {
@@ -226,6 +382,12 @@
       "cover": "창문이앤씨.jpg",
       "photos": [
         "창문이앤씨.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "창문이앤씨.jpg"
+        }
       ]
     },
     {
@@ -235,6 +397,12 @@
       "cover": "휴대폰할인매장.jpg",
       "photos": [
         "휴대폰할인매장.jpg"
+      ],
+      "blocks": [
+        {
+          "type": "image",
+          "file": "휴대폰할인매장.jpg"
+        }
       ]
     }
   ]
