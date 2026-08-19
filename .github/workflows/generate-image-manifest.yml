@@ -154,6 +154,7 @@ jobs:
 
               result.append({
                   "slug": slug,
+                  "key": base,
                   "title": title,
                   "date": group_date,
                   "cover": cover,

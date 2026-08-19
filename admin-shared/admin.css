@@ -26,16 +26,52 @@ button:disabled{ opacity:0.5; cursor:not-allowed; }
 .group-card:last-child{ border-bottom:none; }
 .group-card img.cover{ width:96px; height:120px; object-fit:cover; border-radius:6px; background:var(--line); flex-shrink:0; }
 .group-card .fields{ flex:1; min-width:0; }
-.group-card .photo-list{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; }
-.group-card .photo-list .thumb{ position:relative; }
-.group-card .photo-list img{ width:52px; height:65px; object-fit:cover; border-radius:4px; }
-.group-card .photo-list .del{
-  position:absolute; top:-6px; right:-6px; background:#c0392b; color:#fff;
-  border-radius:50%; width:18px; height:18px; font-size:11px; line-height:18px;
-  text-align:center; padding:0; cursor:pointer;
-}
-select{ padding:6px; border-radius:6px; border:1px solid var(--line); font-family:inherit; }
 .status{ font-size:12px; color:var(--muted); margin-top:8px; white-space:pre-wrap; }
 .status.error{ color:#c0392b; }
 .status.ok{ color:#2c7a3f; }
 .hint{ font-size:12px; color:var(--muted); line-height:1.6; }
+
+/* ---------- 블록 에디터 (글/사진을 순서대로 쌓는 UI) ---------- */
+.block-editor{ margin-bottom:12px; }
+.block-list{
+  display:flex; flex-direction:column; gap:8px;
+  margin-bottom:10px;
+}
+.block{
+  display:flex; gap:8px;
+  border:1px solid var(--line); border-radius:8px;
+  padding:8px; background:#fdfcfa;
+}
+.block-controls{
+  display:flex; flex-direction:column; gap:2px;
+  flex-shrink:0;
+}
+.block-controls button{
+  background:transparent; color:var(--muted); border:1px solid var(--line);
+  width:26px; height:26px; padding:0; font-size:11px; border-radius:5px;
+}
+.block-controls button:hover:not(:disabled){ color:var(--ink); border-color:var(--ink); }
+.block-controls button.block-del{ color:#c0392b; border-color:#e8c9c4; }
+.block-body{ flex:1; min-width:0; }
+.block-text .block-body textarea{
+  min-height:60px; margin-bottom:0;
+}
+.block-image .block-body{ display:flex; gap:10px; align-items:center; }
+.block-thumb{
+  width:64px; height:80px; object-fit:cover; border-radius:6px;
+  background:var(--line); flex-shrink:0;
+}
+.block-image-meta{ display:flex; flex-direction:column; gap:6px; min-width:0; }
+.block-image-name{
+  font-size:11px; color:var(--muted);
+  word-break:break-all;
+}
+.cover-toggle{
+  align-self:flex-start;
+  background:transparent; color:var(--muted); border:1px solid var(--line);
+  font-size:12px; padding:5px 10px;
+}
+.cover-toggle.is-cover{
+  background:#fff4d6; color:#8a6d1a; border-color:#e9cf7a;
+}
+.block-toolbar{ display:flex; gap:8px; }

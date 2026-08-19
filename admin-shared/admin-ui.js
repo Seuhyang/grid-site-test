@@ -1,7 +1,15 @@
 /* /admin-shared/admin-ui.js
    admin-a, admin-b가 공통으로 쓰는 로직입니다.
    각 admin 페이지는 실제로 GitHub에 파일을 쓰는 방법(putFile/deleteFile)만
-   자기 방식대로(토큰 직접 / Worker 경유) 만들어서 AdminUI.start()에 넘겨줍니다. */
+   자기 방식대로(토큰 직접 / Worker 경유) 만들어서 AdminUI.start()에 넘겨줍니다.
+
+   ------------------------------------------------------------------
+   블록 에디터: 글/사진을 순서대로 쌓아서(블로그 글처럼) 만드는 공용 UI.
+   - + 글 추가 / + 사진 추가 로 블록을 늘리고
+   - ▲▼ 로 순서를 바꾸고
+   - 사진 블록에서 ★ 대표사진으로 지정
+   - × 로 블록 삭제 (사진은 저장을 눌러야 실제로 삭제됩니다)
+   ------------------------------------------------------------------ */
 
 const AdminUI = (() => {
 
@@ -65,66 +73,293 @@ const AdminUI = (() => {
     return candidate;
   }
 
-  function blocksToText(group){
-    if (group.blocks && group.blocks.length){
-      return group.blocks
-        .map(b => b.type === 'text' ? b.text : `{{${b.file}}}`)
-        .join('\n\n');
-    }
-    return '';
+  // 기존 사진들 중 "key_숫자두자리" 패턴의 가장 큰 번호 다음 번호를 돌려줍니다.
+  function nextSuffixNumber(existingPhotos, key){
+    const re = new RegExp('^' + key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '_(\\d{2})\\.');
+    let max = 0;
+    existingPhotos.forEach(file => {
+      const m = file.match(re);
+      if (m) max = Math.max(max, parseInt(m[1], 10));
+    });
+    return max + 1;
   }
 
+  function blocksToText(blocks){
+    return blocks
+      .map(b => b.type === 'text' ? b.text : `{{${b.file}}}`)
+      .join('\n\n');
+  }
+
+  function groupBlocksToEditorBlocks(group){
+    const source = (group.blocks && group.blocks.length)
+      ? group.blocks
+      : group.photos.map(file => ({ type: 'image', file }));
+    return source.map(b => {
+      if (b.type === 'text') return { id: nextBlockId(), type: 'text', text: b.text };
+      return {
+        id: nextBlockId(), type: 'image', file: b.file,
+        src: `../images/${b.file}`, isNew: false, isCover: b.file === group.cover
+      };
+    });
+  }
+
+  let _blockIdSeq = 0;
+  function nextBlockId(){ return 'blk' + (_blockIdSeq++); }
+
+  /* ---------------- 블록 에디터 컴포넌트 ---------------- */
+  function createBlockEditor(initialBlocks){
+    const state = { blocks: initialBlocks.slice() };
+
+    const wrap = document.createElement('div');
+    wrap.className = 'block-editor';
+
+    const list = document.createElement('div');
+    list.className = 'block-list';
+
+    const toolbar = document.createElement('div');
+    toolbar.className = 'block-toolbar';
+
+    const addTextBtn = document.createElement('button');
+    addTextBtn.type = 'button';
+    addTextBtn.className = 'secondary';
+    addTextBtn.textContent = '+ 글 추가';
+    addTextBtn.addEventListener('click', () => {
+      state.blocks.push({ id: nextBlockId(), type: 'text', text: '' });
+      render();
+    });
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = 'image/*';
+    fileInput.multiple = true;
+    fileInput.style.display = 'none';
+    fileInput.addEventListener('change', () => {
+      Array.from(fileInput.files).forEach(f => {
+        state.blocks.push({
+          id: nextBlockId(), type: 'image', file: null, pendingFile: f,
+          src: URL.createObjectURL(f), isNew: true, isCover: false
+        });
+      });
+      fileInput.value = '';
+      render();
+    });
+
+    const addImageBtn = document.createElement('button');
+    addImageBtn.type = 'button';
+    addImageBtn.className = 'secondary';
+    addImageBtn.textContent = '+ 사진 추가';
+    addImageBtn.addEventListener('click', () => fileInput.click());
+
+    toolbar.append(addTextBtn, addImageBtn, fileInput);
+
+    function move(index, dir){
+      const target = index + dir;
+      if (target < 0 || target >= state.blocks.length) return;
+      const tmp = state.blocks[index];
+      state.blocks[index] = state.blocks[target];
+      state.blocks[target] = tmp;
+      render();
+    }
+
+    function setCover(id){
+      state.blocks.forEach(b => { if (b.type === 'image') b.isCover = (b.id === id); });
+      render();
+    }
+
+    function removeBlock(id){
+      state.blocks = state.blocks.filter(b => b.id !== id);
+      render();
+    }
+
+    function render(){
+      list.innerHTML = '';
+      if (!state.blocks.length){
+        const empty = document.createElement('p');
+        empty.className = 'hint';
+        empty.textContent = '아직 블록이 없습니다. 아래 버튼으로 글이나 사진을 추가해주세요.';
+        list.appendChild(empty);
+      }
+      state.blocks.forEach((block, i) => {
+        const row = document.createElement('div');
+        row.className = 'block block-' + block.type;
+
+        const controls = document.createElement('div');
+        controls.className = 'block-controls';
+        const upBtn = document.createElement('button');
+        upBtn.type = 'button'; upBtn.textContent = '▲'; upBtn.title = '위로';
+        upBtn.disabled = (i === 0);
+        upBtn.addEventListener('click', () => move(i, -1));
+        const downBtn = document.createElement('button');
+        downBtn.type = 'button'; downBtn.textContent = '▼'; downBtn.title = '아래로';
+        downBtn.disabled = (i === state.blocks.length - 1);
+        downBtn.addEventListener('click', () => move(i, 1));
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button'; delBtn.textContent = '×'; delBtn.title = '이 블록 삭제';
+        delBtn.className = 'block-del';
+        delBtn.addEventListener('click', () => removeBlock(block.id));
+        controls.append(upBtn, downBtn, delBtn);
+
+        const body = document.createElement('div');
+        body.className = 'block-body';
+
+        if (block.type === 'text'){
+          const ta = document.createElement('textarea');
+          ta.value = block.text;
+          ta.placeholder = '이 위치에 들어갈 글을 적어주세요.';
+          ta.addEventListener('input', () => { block.text = ta.value; });
+          body.appendChild(ta);
+        } else {
+          const img = document.createElement('img');
+          img.src = block.src;
+          img.className = 'block-thumb';
+
+          const meta = document.createElement('div');
+          meta.className = 'block-image-meta';
+
+          const nameEl = document.createElement('span');
+          nameEl.className = 'block-image-name';
+          nameEl.textContent = block.isNew ? '새 사진 (저장 시 업로드됨)' : block.file;
+
+          const coverBtn = document.createElement('button');
+          coverBtn.type = 'button';
+          coverBtn.className = 'cover-toggle' + (block.isCover ? ' is-cover' : '');
+          coverBtn.textContent = block.isCover ? '★ 대표사진' : '☆ 대표사진으로 지정';
+          coverBtn.addEventListener('click', () => setCover(block.id));
+
+          meta.append(nameEl, coverBtn);
+          body.append(img, meta);
+        }
+
+        row.append(controls, body);
+        list.appendChild(row);
+      });
+    }
+
+    render();
+    wrap.append(list, toolbar);
+
+    return {
+      el: wrap,
+      getBlocks: () => state.blocks,
+      reset: () => { state.blocks = []; render(); }
+    };
+  }
+
+  /* ---------------- 새 그룹 만들기 ---------------- */
   function wireNewGroupUpload(api){
     const statusEl = document.getElementById('newGroupStatus');
+    const editorHost = document.getElementById('newGroupEditor');
+    const editor = createBlockEditor([]);
+    editorHost.appendChild(editor.el);
 
     document.getElementById('newGroupUploadBtn').addEventListener('click', async () => {
       const title = document.getElementById('newGroupTitle').value.trim();
       const slugInput = document.getElementById('newGroupSlug').value.trim();
-      const files = document.getElementById('newGroupFiles').files;
-      if (!files.length) return alert('사진을 선택해주세요.');
+      const blocks = editor.getBlocks();
+      const imageBlocks = blocks.filter(b => b.type === 'image');
+      if (!imageBlocks.length) return alert('사진을 최소 한 장 추가해주세요.');
 
       statusEl.className = 'status';
       statusEl.textContent = '준비 중...';
 
       const desiredSlug = slugInput ? slugify(slugInput) : ('upload-' + Date.now());
       if (slugInput && !desiredSlug) return alert('주소용 이름에 영문/숫자/하이픈만 입력해주세요.');
-      const base = await pickAvailableSlug(desiredSlug);
-      const filenames = [];
+      const key = await pickAvailableSlug(desiredSlug);
 
       try {
-        for (let i = 0; i < files.length; i++){
-          statusEl.textContent = `업로드 중... (${i + 1}/${files.length})`;
-          const b64 = await fileToWebP(files[i]);
-          const suffix = files.length > 1 ? '_' + String(i + 1).padStart(2, '0') : '';
-          const filename = `${base}${suffix}.webp`;
+        let idx = 0;
+        for (const block of imageBlocks){
+          idx++;
+          statusEl.textContent = `업로드 중... (${idx}/${imageBlocks.length})`;
+          const suffix = imageBlocks.length > 1 ? '_' + String(idx).padStart(2, '0') : '';
+          const filename = `${key}${suffix}.webp`;
+          const b64 = await fileToWebP(block.pendingFile);
           await api.putFile(`images/${filename}`, b64, `사진 추가: ${filename}`);
-          filenames.push(filename);
-        }
-        if (title){
-          await api.putFile(`images/${base}.title.txt`, utf8ToBase64(title), `제목 설정: ${base}`);
+          block.file = filename;
+          block.isNew = false;
         }
 
-        // 사진 사이사이에 "감상평을 적어주세요" 빈칸이 끼워진 본문 초안을 만들어둡니다.
-        // 실제 문구는 나중에 관리자 페이지의 "본문" 칸에서 채워 넣으면 됩니다.
-        const desc = document.getElementById('newGroupDesc').value.trim();
-        const draftParts = [];
-        if (desc) draftParts.push(desc);
-        filenames.forEach(filename => {
-          draftParts.push(`{{${filename}}}`);
-          draftParts.push('(여기에 한두 줄 감상평을 적어보세요)');
-        });
-        await api.putFile(`images/${base}.content.txt`, utf8ToBase64(draftParts.join('\n\n')), `본문 초안 생성: ${base}`);
-        statusEl.textContent = '업로드 완료! 1분 내로 사이트에 자동 반영됩니다.';
+        if (title){
+          await api.putFile(`images/${key}.title.txt`, utf8ToBase64(title), `제목 설정: ${key}`);
+        }
+
+        const contentText = blocksToText(blocks);
+        await api.putFile(`images/${key}.content.txt`, utf8ToBase64(contentText), `본문 생성: ${key}`);
+
+        const coverBlock = imageBlocks.find(b => b.isCover) || imageBlocks[0];
+        if (coverBlock){
+          await api.putFile(`images/${key}.cover.txt`, utf8ToBase64(coverBlock.file), `대표사진 설정: ${key}`);
+        }
+
+        statusEl.textContent = '만들었습니다! 1분 내로 사이트에 자동 반영됩니다.';
         statusEl.className = 'status ok';
         document.getElementById('newGroupTitle').value = '';
         document.getElementById('newGroupSlug').value = '';
-        document.getElementById('newGroupDesc').value = '';
-        document.getElementById('newGroupFiles').value = '';
+        editor.reset();
       } catch (err) {
         statusEl.textContent = err.message;
         statusEl.className = 'status error';
       }
     });
+  }
+
+  /* ---------------- 기존 그룹 저장 (바뀐 것만 반영) ---------------- */
+  async function saveGroupCard({ group, api, titleInput, editor, statusEl, saveBtn, onSaved }){
+    saveBtn.disabled = true;
+    statusEl.className = 'status';
+    statusEl.textContent = '저장 중...';
+    try {
+      const key = group.key || group.slug;
+      const blocks = editor.getBlocks();
+
+      // 1) 새로 추가된 사진 업로드
+      let suffixCounter = nextSuffixNumber(group.photos, key);
+      for (const block of blocks){
+        if (block.type === 'image' && block.isNew){
+          const b64 = await fileToWebP(block.pendingFile);
+          const filename = `${key}_${String(suffixCounter).padStart(2, '0')}.webp`;
+          suffixCounter++;
+          await api.putFile(`images/${filename}`, b64, `사진 추가: ${filename}`);
+          block.file = filename;
+          block.isNew = false;
+        }
+      }
+
+      // 2) 에디터에서 빠진 기존 사진은 삭제
+      const keptFiles = new Set(blocks.filter(b => b.type === 'image').map(b => b.file));
+      const removed = group.photos.filter(f => !keptFiles.has(f));
+      for (const file of removed){
+        await api.deleteFile(`images/${file}`, `사진 삭제: ${file}`);
+      }
+
+      // 3) 대표사진 결정 (지정 안 했으면 첫 사진)
+      const imageBlocks = blocks.filter(b => b.type === 'image');
+      const coverBlock = imageBlocks.find(b => b.isCover) || imageBlocks[0];
+      const coverFile = coverBlock ? coverBlock.file : group.cover;
+
+      // 4) 실제로 바뀐 항목만 저장
+      const newTitle = titleInput.value.trim();
+      if (newTitle !== group.title){
+        await api.putFile(`images/${key}.title.txt`, utf8ToBase64(newTitle), `제목 수정: ${key}`);
+      }
+      if (coverFile && coverFile !== group.cover){
+        await api.putFile(`images/${key}.cover.txt`, utf8ToBase64(coverFile), `대표사진 수정: ${key}`);
+      }
+      const newContentText = blocksToText(blocks);
+      const originalContentText = blocksToText(groupBlocksToEditorBlocks(group));
+      if (newContentText !== originalContentText){
+        await api.putFile(`images/${key}.content.txt`, utf8ToBase64(newContentText), `본문 수정: ${key}`);
+      }
+
+      statusEl.textContent = '저장했습니다. 잠시 후 사이트에 반영됩니다.';
+      statusEl.className = 'status ok';
+      if (onSaved) onSaved();
+    } catch (err) {
+      statusEl.textContent = err.message;
+      statusEl.className = 'status error';
+    } finally {
+      saveBtn.disabled = false;
+    }
   }
 
   function renderGroups(groups, api){
@@ -146,98 +381,26 @@ const AdminUI = (() => {
       titleInput.type = 'text';
       titleInput.value = group.title;
 
-      const titleBtn = document.createElement('button');
-      titleBtn.textContent = '제목 저장';
-      titleBtn.addEventListener('click', async () => {
-        try {
-          await api.putFile(`images/${group.slug}.title.txt`, utf8ToBase64(titleInput.value.trim()), `제목 수정: ${group.slug}`);
-          alert('제목을 저장했습니다. 잠시 후 반영됩니다.');
-        } catch (err) { alert(err.message); }
-      });
+      const editor = createBlockEditor(groupBlocksToEditorBlocks(group));
 
-      const contentTextarea = document.createElement('textarea');
-      contentTextarea.value = blocksToText(group);
-      contentTextarea.placeholder = '글을 적고, 사진을 넣고 싶은 자리에 아래 사진을 클릭해서 넣어주세요.';
-      contentTextarea.style.minHeight = '160px';
+      const saveBtn = document.createElement('button');
+      saveBtn.textContent = '저장';
 
-      const contentBtn = document.createElement('button');
-      contentBtn.className = 'secondary';
-      contentBtn.textContent = '본문 저장';
-      contentBtn.addEventListener('click', async () => {
-        try {
-          await api.putFile(`images/${group.slug}.content.txt`, utf8ToBase64(contentTextarea.value), `본문 수정: ${group.slug}`);
-          alert('본문을 저장했습니다. 잠시 후 반영됩니다.');
-        } catch (err) { alert(err.message); }
-      });
+      const statusEl = document.createElement('p');
+      statusEl.className = 'status';
 
-      const coverSelect = document.createElement('select');
-      group.photos.forEach(file => {
-        const opt = document.createElement('option');
-        opt.value = file; opt.textContent = file;
-        if (file === group.cover) opt.selected = true;
-        coverSelect.appendChild(opt);
-      });
-      const coverBtn = document.createElement('button');
-      coverBtn.className = 'secondary';
-      coverBtn.textContent = '대표사진(메인 노출) 저장';
-      coverBtn.addEventListener('click', async () => {
-        try {
-          await api.putFile(`images/${group.slug}.cover.txt`, utf8ToBase64(coverSelect.value), `대표사진 수정: ${group.slug}`);
-          alert('대표사진을 저장했습니다. 잠시 후 반영됩니다.');
-        } catch (err) { alert(err.message); }
-      });
-
-      const photoList = document.createElement('div');
-      photoList.className = 'photo-list';
-      group.photos.forEach(file => {
-        const thumb = document.createElement('div');
-        thumb.className = 'thumb';
-
-        const img = document.createElement('img');
-        img.src = `../images/${file}`;
-        img.title = '클릭하면 본문 커서 위치에 삽입됩니다';
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', () => {
-          const tag = `{{${file}}}`;
-          const start = contentTextarea.selectionStart ?? contentTextarea.value.length;
-          const end = contentTextarea.selectionEnd ?? contentTextarea.value.length;
-          const before = contentTextarea.value.slice(0, start);
-          const after = contentTextarea.value.slice(end);
-          contentTextarea.value = `${before}\n${tag}\n${after}`;
-          contentTextarea.focus();
-        });
-
-        const del = document.createElement('button');
-        del.className = 'del';
-        del.textContent = '×';
-        del.title = '이 사진 삭제';
-        del.addEventListener('click', async (e) => {
-          e.stopPropagation();
-          if (!confirm(`${file} 을(를) 삭제할까요?`)) return;
-          try {
-            await api.deleteFile(`images/${file}`, `사진 삭제: ${file}`);
-            alert('삭제했습니다. 잠시 후 반영됩니다.');
-            loadGroups(api);
-          } catch (err) { alert(err.message); }
-        });
-
-        thumb.appendChild(img);
-        thumb.appendChild(del);
-        photoList.appendChild(thumb);
-      });
-
-      const contentHint = document.createElement('p');
-      contentHint.className = 'hint';
-      contentHint.textContent = '아래 사진 썸네일을 클릭하면 본문 커서 위치에 자동으로 들어갑니다.';
+      saveBtn.addEventListener('click', () => saveGroupCard({
+        group, api, titleInput, editor, statusEl, saveBtn,
+        onSaved: () => loadGroups(api)
+      }));
 
       fields.append(
-        Object.assign(document.createElement('label'), { textContent: '제목' }), titleInput, titleBtn,
-        document.createElement('br'), document.createElement('br'),
-        Object.assign(document.createElement('label'), { textContent: '본문 (글과 사진을 원하는 순서로)' }),
-        contentTextarea, contentHint, contentBtn,
-        document.createElement('br'), document.createElement('br'),
-        Object.assign(document.createElement('label'), { textContent: '대표사진(메인 그리드에 보일 사진)' }), coverSelect, coverBtn,
-        photoList
+        Object.assign(document.createElement('label'), { textContent: '제목' }),
+        titleInput,
+        Object.assign(document.createElement('label'), { textContent: '본문 (글·사진 블록 — ▲▼로 순서 변경, ★로 대표사진 지정)' }),
+        editor.el,
+        saveBtn,
+        statusEl
       );
 
       card.appendChild(cover);
