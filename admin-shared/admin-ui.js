@@ -90,6 +90,14 @@ const AdminUI = (() => {
       .join('\n\n');
   }
 
+  // 에디터 내부 블록(썸네일 src, 임시 파일 등 포함)을 저장/캐시용 순수 데이터로 변환
+  function blocksToPlainData(blocks){
+    return blocks.map(b => b.type === 'text'
+      ? { type: 'text', text: b.text }
+      : { type: 'image', file: b.file }
+    );
+  }
+
   function groupBlocksToEditorBlocks(group){
     const source = (group.blocks && group.blocks.length)
       ? group.blocks
@@ -291,7 +299,19 @@ const AdminUI = (() => {
           await api.putFile(`images/${key}.cover.txt`, utf8ToBase64(coverBlock.file), `대표사진 설정: ${key}`);
         }
 
-        statusEl.textContent = '만들었습니다! 1분 내로 사이트에 자동 반영됩니다.';
+        // Actions/manifest.json을 기다리지 않고, 방금 만든 그룹을 목록에 바로 추가합니다.
+        allGroups.unshift({
+          slug: key,
+          key,
+          title: title || key,
+          date: new Date().toISOString(),
+          cover: coverBlock ? coverBlock.file : imageBlocks[0].file,
+          photos: imageBlocks.map(b => b.file),
+          blocks: blocksToPlainData(blocks),
+        });
+        renderGroupBrowser(api);
+
+        statusEl.textContent = '만들었습니다! 이 화면 목록에는 바로 나타나고, 실제 사이트에는 1분 내로 반영됩니다.';
         statusEl.className = 'status ok';
         document.getElementById('newGroupTitle').value = '';
         document.getElementById('newGroupSlug').value = '';
@@ -304,7 +324,7 @@ const AdminUI = (() => {
   }
 
   /* ---------------- 기존 그룹 저장 (바뀐 것만 반영) ---------------- */
-  async function saveGroupCard({ group, api, titleInput, editor, statusEl, saveBtn, onSaved }){
+  async function saveGroupCard({ group, api, titleInput, editor, statusEl, saveBtn, coverImgEl, onSaved }){
     saveBtn.disabled = true;
     statusEl.className = 'status';
     statusEl.textContent = '저장 중...';
@@ -351,9 +371,18 @@ const AdminUI = (() => {
         await api.putFile(`images/${key}.content.txt`, utf8ToBase64(newContentText), `본문 수정: ${key}`);
       }
 
-      statusEl.textContent = '저장했습니다. 잠시 후 사이트에 반영됩니다.';
+      // 실제 방문자용 사이트는 GitHub Actions가 돌아야 반영되지만(약 1분),
+      // 관리자 화면은 그걸 기다리지 않고 지금 편집한 내용으로 바로 갱신합니다.
+      // (group 객체는 목록에 있는 것과 같은 참조라서, 목록으로 돌아가도 바로 반영돼 보여요)
+      group.title = newTitle;
+      group.cover = coverFile || group.cover;
+      group.photos = imageBlocks.map(b => b.file);
+      group.blocks = blocksToPlainData(blocks);
+      if (coverImgEl) coverImgEl.src = `../images/${group.cover}`;
+
+      statusEl.textContent = '저장했습니다. 이 화면엔 바로 반영됐어요. 실제 사이트에는 1분 내로 반영됩니다.';
       statusEl.className = 'status ok';
-      if (onSaved) onSaved();
+      if (onSaved) onSaved(group);
     } catch (err) {
       statusEl.textContent = err.message;
       statusEl.className = 'status error';
@@ -362,51 +391,124 @@ const AdminUI = (() => {
     }
   }
 
-  function renderGroups(groups, api){
-    const groupsList = document.getElementById('groupsList');
-    groupsList.innerHTML = '';
+  // 그룹 목록 상태 - manifest.json에서 한 번 불러온 뒤로는 이걸 계속 씀
+  // (저장할 때마다 다시 불러오지 않음 - Actions 기다릴 필요 없음)
+  let allGroups = [];
+  let viewMode = localStorage.getItem('admin_group_view') || 'grid'; // 'grid' | 'list'
 
-    groups.forEach(group => {
-      const card = document.createElement('div');
-      card.className = 'group-card';
+  function renderGroupBrowser(api){
+    const host = document.getElementById('groupsList');
+    host.innerHTML = '';
 
-      const cover = document.createElement('img');
-      cover.className = 'cover';
-      cover.src = `../images/${group.cover}`;
+    const toolbar = document.createElement('div');
+    toolbar.className = 'group-view-toggle';
 
-      const fields = document.createElement('div');
-      fields.className = 'fields';
-
-      const titleInput = document.createElement('input');
-      titleInput.type = 'text';
-      titleInput.value = group.title;
-
-      const editor = createBlockEditor(groupBlocksToEditorBlocks(group));
-
-      const saveBtn = document.createElement('button');
-      saveBtn.textContent = '저장';
-
-      const statusEl = document.createElement('p');
-      statusEl.className = 'status';
-
-      saveBtn.addEventListener('click', () => saveGroupCard({
-        group, api, titleInput, editor, statusEl, saveBtn,
-        onSaved: () => loadGroups(api)
-      }));
-
-      fields.append(
-        Object.assign(document.createElement('label'), { textContent: '제목' }),
-        titleInput,
-        Object.assign(document.createElement('label'), { textContent: '본문 (글·사진 블록 — ▲▼로 순서 변경, ★로 대표사진 지정)' }),
-        editor.el,
-        saveBtn,
-        statusEl
-      );
-
-      card.appendChild(cover);
-      card.appendChild(fields);
-      groupsList.appendChild(card);
+    const gridBtn = document.createElement('button');
+    gridBtn.type = 'button';
+    gridBtn.className = 'secondary' + (viewMode === 'grid' ? ' is-active' : '');
+    gridBtn.textContent = '이미지로 보기';
+    gridBtn.addEventListener('click', () => {
+      viewMode = 'grid';
+      localStorage.setItem('admin_group_view', 'grid');
+      renderGroupBrowser(api);
     });
+
+    const listBtn = document.createElement('button');
+    listBtn.type = 'button';
+    listBtn.className = 'secondary' + (viewMode === 'list' ? ' is-active' : '');
+    listBtn.textContent = '제목으로 보기';
+    listBtn.addEventListener('click', () => {
+      viewMode = 'list';
+      localStorage.setItem('admin_group_view', 'list');
+      renderGroupBrowser(api);
+    });
+
+    toolbar.append(gridBtn, listBtn);
+    host.appendChild(toolbar);
+
+    if (!allGroups.length){
+      const empty = document.createElement('p');
+      empty.className = 'hint';
+      empty.textContent = '아직 그룹이 없습니다. 위에서 새 그룹을 먼저 만들어보세요.';
+      host.appendChild(empty);
+      return;
+    }
+
+    const container = document.createElement('div');
+    container.className = viewMode === 'grid' ? 'group-grid' : 'group-textlist';
+
+    allGroups.forEach(group => {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.addEventListener('click', () => openGroupDetail(group, api));
+
+      if (viewMode === 'grid'){
+        item.className = 'group-grid-item';
+        const img = document.createElement('img');
+        img.src = `../images/${group.cover}`;
+        const cap = document.createElement('span');
+        cap.textContent = group.title;
+        item.append(img, cap);
+      } else {
+        item.className = 'group-textlist-item';
+        item.textContent = group.title;
+      }
+      container.appendChild(item);
+    });
+
+    host.appendChild(container);
+  }
+
+  function openGroupDetail(group, api){
+    const host = document.getElementById('groupsList');
+    host.innerHTML = '';
+
+    const backBtn = document.createElement('button');
+    backBtn.type = 'button';
+    backBtn.className = 'secondary back-to-list';
+    backBtn.textContent = '← 목록으로';
+    backBtn.addEventListener('click', () => renderGroupBrowser(api));
+    host.appendChild(backBtn);
+
+    const card = document.createElement('div');
+    card.className = 'group-card';
+
+    const cover = document.createElement('img');
+    cover.className = 'cover';
+    cover.src = `../images/${group.cover}`;
+
+    const fields = document.createElement('div');
+    fields.className = 'fields';
+
+    const titleInput = document.createElement('input');
+    titleInput.type = 'text';
+    titleInput.value = group.title;
+
+    const editor = createBlockEditor(groupBlocksToEditorBlocks(group));
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = '저장';
+
+    const statusEl = document.createElement('p');
+    statusEl.className = 'status';
+
+    saveBtn.addEventListener('click', () => saveGroupCard({
+      group, api, titleInput, editor, statusEl, saveBtn,
+      coverImgEl: cover
+    }));
+
+    fields.append(
+      Object.assign(document.createElement('label'), { textContent: '제목' }),
+      titleInput,
+      Object.assign(document.createElement('label'), { textContent: '본문 (글·사진 블록 — ▲▼로 순서 변경, ★로 대표사진 지정)' }),
+      editor.el,
+      saveBtn,
+      statusEl
+    );
+
+    card.appendChild(cover);
+    card.appendChild(fields);
+    host.appendChild(card);
   }
 
   async function loadGroups(api){
@@ -414,7 +516,8 @@ const AdminUI = (() => {
     groupsList.innerHTML = '불러오는 중...';
     const res = await fetch(`../images/manifest.json?t=${Date.now()}`);
     const data = await res.json();
-    renderGroups(data.groups || [], api);
+    allGroups = data.groups || [];
+    renderGroupBrowser(api);
   }
 
   // 로그인 성공 후 각 admin 페이지가 호출하는 진입점

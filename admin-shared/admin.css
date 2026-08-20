@@ -75,3 +75,35 @@ button:disabled{ opacity:0.5; cursor:not-allowed; }
   background:#fff4d6; color:#8a6d1a; border-color:#e9cf7a;
 }
 .block-toolbar{ display:flex; gap:8px; }
+
+/* ---------------- 그룹 목록 (그리드/글자 보기 전환) ---------------- */
+.group-view-toggle{ display:flex; gap:8px; margin:4px 0 18px; }
+.group-view-toggle button.is-active{ background:var(--ink); color:#fff; border-color:var(--ink); }
+
+.group-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap:12px;
+}
+.group-grid-item{
+  display:flex; flex-direction:column; gap:6px;
+  padding:0; border:none; background:none; cursor:pointer; text-align:left;
+  font-family:inherit;
+}
+.group-grid-item img{
+  width:100%; aspect-ratio:4/5; object-fit:cover; border-radius:8px;
+  border:1px solid var(--line); background:var(--line);
+}
+.group-grid-item span{
+  font-size:12px; color:var(--ink);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+
+.group-textlist{ display:flex; flex-direction:column; }
+.group-textlist-item{
+  text-align:left; padding:14px 4px; border:none; border-bottom:1px solid var(--line);
+  background:none; cursor:pointer; font-size:14px; color:var(--ink); font-family:inherit;
+}
+.group-textlist-item:hover{ color:var(--accent); }
+
+.back-to-list{ margin-bottom:16px; }
