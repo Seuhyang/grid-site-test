@@ -26,6 +26,12 @@ header .home-link{
   padding:6px 12px; text-decoration:none;
 }
 header .home-link:hover{ border-color:var(--ink); }
+
+@media (max-width:600px){
+  header{ flex-wrap:wrap; row-gap:10px; padding:14px 16px; }
+  header .badge{ display:none; } /* 긴 안내 문구는 좁은 화면에서 숨김 - 홈 버튼 공간 확보 */
+  header .home-link{ font-size:11px; padding:5px 10px; white-space:nowrap; }
+}
 main{ max-width:900px; margin:0 auto; padding:24px; }
 section{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:20px; }
 h2{ font-size:15px; margin:0 0 14px; }
