@@ -5,14 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Empower Design · 관리자 (A안)</title>
 <link rel="icon" type="image/png" href="../assets/favicon-32.png">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Oswald:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../admin-shared/admin.css">
 </head>
 <body>
 
 <header>
-  <span class="brand">Empower Design</span>
-  <span class="badge">관리자 (A안 · GitHub 토큰 직접 사용)</span>
+  <a class="brand" href="../" aria-label="Empower Design 홈으로">
+    <span class="word-empower">EmpoweR</span>
+    <span class="word-design">DESIGN</span>
+  </a>
+  <div class="header-right">
+    <span class="badge">관리자 (A안 · GitHub 토큰 직접 사용)</span>
+    <a class="home-link" href="../">← 홈으로</a>
+  </div>
 </header>
 
 <main>
@@ -52,6 +58,17 @@
   <div id="adminArea">
 
     <section>
+      <h2>접속자 통계</h2>
+      <p class="hint" id="statsHint">
+        아래 상수에 GoatCounter 사이트 코드를 넣으면 이 버튼으로 총 방문자 수·오늘 방문자 수를 바로 볼 수 있어요.
+        (무료, <a href="https://www.goatcounter.com" target="_blank" rel="noopener noreferrer">goatcounter.com</a>에서 사이트 코드만 만들면 됩니다)
+      </p>
+      <a class="stats-link" id="statsLink" href="#" target="_blank" rel="noopener noreferrer">
+        <button type="button" id="statsBtn" disabled>통계 보기 (설정 필요)</button>
+      </a>
+    </section>
+
+    <section>
       <h2>3. 새 그룹(사진 묶음) 만들기</h2>
       <p class="hint">글과 사진을 원하는 순서로 쌓아서 하나의 그룹(=하나의 페이지)을 만듭니다.</p>
       <label>제목 (비워두면 날짜로 자동 표시)</label>
@@ -82,6 +99,17 @@
 
 <script src="../admin-shared/admin-ui.js"></script>
 <script>
+// assets/gallery-common.js의 ANALYTICS_CODE와 반드시 같은 값을 넣어주세요.
+const ANALYTICS_CODE = ''; // 예: 'empowerdesign'
+
+(function setupStatsButton(){
+  if (!ANALYTICS_CODE) return;
+  document.getElementById('statsLink').href = `https://${ANALYTICS_CODE}.goatcounter.com`;
+  document.getElementById('statsBtn').disabled = false;
+  document.getElementById('statsBtn').textContent = '통계 보기 (총 방문자 · 오늘 방문자)';
+  document.getElementById('statsHint').style.display = 'none';
+})();
+
 const API_BASE = 'https://api.github.com';
 
 function getConfig(){

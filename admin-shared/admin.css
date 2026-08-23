@@ -3,9 +3,29 @@
 :root{ --ink:#131211; --paper:#faf9f6; --line:#e2ded4; --muted:#8a8478; --accent:#3b4b6b; }
 *{ box-sizing:border-box; }
 body{ margin:0; background:var(--paper); color:var(--ink); font-family:'Work Sans',sans-serif; }
-header{ padding:20px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
-header .brand{ font-family:'Baloo 2',sans-serif; font-weight:800; color:#e2431f; }
+header{ padding:16px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; }
+header .brand{ display:flex; align-items:center; gap:8px; line-height:1; text-decoration:none; }
+header .brand .word-empower{
+  font-family:'Yellowtail', cursive;
+  font-weight:400; font-size:26px;
+  color:#dfa23f;
+  text-shadow: 1px 1px 0 #52290f;
+  letter-spacing:0.01em;
+}
+header .brand .word-design{
+  font-family:'Oswald', sans-serif;
+  font-weight:700; font-size:10px;
+  letter-spacing:0.3em;
+  color:var(--ink);
+}
+header .header-right{ display:flex; align-items:center; gap:16px; }
 header .badge{ font-size:12px; color:var(--muted); }
+header .home-link{
+  font-size:12px; color:var(--ink);
+  border:1px solid var(--line); border-radius:6px;
+  padding:6px 12px; text-decoration:none;
+}
+header .home-link:hover{ border-color:var(--ink); }
 main{ max-width:900px; margin:0 auto; padding:24px; }
 section{ background:#fff; border:1px solid var(--line); border-radius:10px; padding:20px; margin-bottom:20px; }
 h2{ font-size:15px; margin:0 0 14px; }
@@ -107,3 +127,6 @@ button:disabled{ opacity:0.5; cursor:not-allowed; }
 .group-textlist-item:hover{ color:var(--accent); }
 
 .back-to-list{ margin-bottom:16px; }
+
+.stats-link{ display:inline-block; text-decoration:none; }
+.stats-link button:disabled{ opacity:0.5; cursor:not-allowed; }

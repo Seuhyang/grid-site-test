@@ -7,6 +7,21 @@
      index.html과 모든 그룹 페이지에 다 반영됩니다)
 */
 
+// 방문자 통계 (GoatCounter, 무료·회원가입 없이도 카운터만 심을 수 있음)
+// https://www.goatcounter.com 에서 사이트 코드를 만든 뒤 여기에 넣으면
+// 이 사이트의 모든 페이지에서 자동으로 방문 집계가 시작됩니다.
+// admin-a/index.html, admin-b/index.html 상단의 같은 이름 상수에도 똑같이 넣어주세요.
+const ANALYTICS_CODE = ''; // 예: 'empowerdesign' (GoatCounter에서 만든 사이트 코드)
+
+(function loadAnalytics(){
+  if (!ANALYTICS_CODE) return;
+  const script = document.createElement('script');
+  script.async = true;
+  script.setAttribute('data-goatcounter', `https://${ANALYTICS_CODE}.goatcounter.com/count`);
+  script.src = 'https://gc.zgo.at/count.js';
+  document.head.appendChild(script);
+})();
+
 // 상단 메뉴 항목. href는 각 메뉴가 실제 연결될 페이지가 생기면 채워주세요.
 // '상담문의'는 여기 목록이 아니라 아래에서 아이콘 두 개와 한 묶음으로 따로 그려집니다.
 const NAV_ITEMS = [
