@@ -306,16 +306,36 @@
       ],
       "blocks": [
         {
+          "type": "text",
+          "text": "임시로 넣은 글입니다.1"
+        },
+        {
           "type": "image",
           "file": "노치_01.jpg"
+        },
+        {
+          "type": "text",
+          "text": "임시로 넣은 글입니다.2"
         },
         {
           "type": "image",
           "file": "노치_02.jpg"
         },
         {
+          "type": "text",
+          "text": "임시로 넣은 글입니다.3"
+        },
+        {
           "type": "image",
           "file": "노치_03.jpg"
+        },
+        {
+          "type": "text",
+          "text": "임시로 넣은 글입니다.4"
+        },
+        {
+          "type": "text",
+          "text": "임시로 넣은 글입니다.5"
         }
       ]
     },
