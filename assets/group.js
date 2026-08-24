@@ -5,6 +5,38 @@
 
 const IMAGES_FOLDER = "../../images";
 
+// 관리자 페이지에서 굵게/기울임/밑줄/색/글꼴 서식을 넣은 글은 HTML 형태로 저장됩니다.
+// 여기서는 허용한 태그/속성만 통과시키고 나머지(스크립트 등)는 제거해서 안전하게 보여줍니다.
+const RICH_TEXT_ALLOWED_TAGS = new Set(['B','I','U','STRONG','EM','SPAN','FONT','BR','DIV']);
+const RICH_TEXT_ALLOWED_ATTRS = new Set(['color', 'face', 'style']);
+
+function sanitizeRichText(html){
+  const template = document.createElement('template');
+  template.innerHTML = html || '';
+
+  function clean(node){
+    [...node.childNodes].forEach(child => {
+      if (child.nodeType === Node.ELEMENT_NODE){
+        if (!RICH_TEXT_ALLOWED_TAGS.has(child.tagName)){
+          child.replaceWith(document.createTextNode(child.textContent));
+          return;
+        }
+        [...child.attributes].forEach(attr => {
+          const name = attr.name.toLowerCase();
+          if (!RICH_TEXT_ALLOWED_ATTRS.has(name) || /url\(|expression\(|javascript:/i.test(attr.value)){
+            child.removeAttribute(attr.name);
+          }
+        });
+        clean(child);
+      } else if (child.nodeType !== Node.TEXT_NODE){
+        child.remove();
+      }
+    });
+  }
+  clean(template.content);
+  return template.innerHTML;
+}
+
 const galleryEl = document.getElementById('gallery');
 const titleEl   = document.getElementById('groupTitle');
 const revealObserver = createRevealObserver();
@@ -30,7 +62,7 @@ function renderGroup(group){
     if (block.type === 'text'){
       const p = document.createElement('p');
       p.className = 'content-text';
-      p.textContent = block.text;
+      p.innerHTML = sanitizeRichText(block.text);
       galleryEl.appendChild(p);
       return;
     }

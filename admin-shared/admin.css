@@ -79,8 +79,32 @@ button:disabled{ opacity:0.5; cursor:not-allowed; }
 .block-controls button:hover:not(:disabled){ color:var(--ink); border-color:var(--ink); }
 .block-controls button.block-del{ color:#c0392b; border-color:#e8c9c4; }
 .block-body{ flex:1; min-width:0; }
-.block-text .block-body textarea{
-  min-height:60px; margin-bottom:0;
+.rich-toolbar{
+  display:flex; align-items:center; gap:6px;
+  margin-bottom:6px;
+}
+.rich-toolbar button{
+  width:26px; height:26px; padding:0;
+  background:transparent; color:var(--ink); border:1px solid var(--line); border-radius:4px;
+  font-size:12px; font-weight:700; cursor:pointer;
+}
+.rich-toolbar button:hover{ border-color:var(--ink); }
+.rich-toolbar input[type=color]{
+  width:26px; height:26px; padding:0; border:1px solid var(--line); border-radius:4px;
+  margin-bottom:0; cursor:pointer;
+}
+.rich-toolbar select{ margin-bottom:0; height:26px; font-size:11px; }
+.block-richtext{
+  min-height:60px;
+  padding:9px 10px;
+  border:1px solid var(--line); border-radius:6px;
+  font-size:14px; line-height:1.6;
+  outline:none;
+}
+.block-richtext:focus{ border-color:var(--ink); }
+.block-richtext:empty::before{
+  content: attr(data-placeholder);
+  color:var(--muted);
 }
 .block-image .block-body{ display:flex; gap:10px; align-items:center; }
 .block-thumb{

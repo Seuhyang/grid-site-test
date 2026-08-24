@@ -211,11 +211,68 @@ const AdminUI = (() => {
         body.className = 'block-body';
 
         if (block.type === 'text'){
-          const ta = document.createElement('textarea');
-          ta.value = block.text;
-          ta.placeholder = '이 위치에 들어갈 글을 적어주세요.';
-          ta.addEventListener('input', () => { block.text = ta.value; });
-          body.appendChild(ta);
+          const richToolbar = document.createElement('div');
+          richToolbar.className = 'rich-toolbar';
+
+          const editable = document.createElement('div');
+          editable.className = 'block-richtext';
+          editable.contentEditable = 'true';
+          editable.innerHTML = block.text || '';
+          editable.setAttribute('data-placeholder', '이 위치에 들어갈 글을 적어주세요.');
+          editable.addEventListener('input', () => { block.text = editable.innerHTML; });
+
+          function addCmdBtn(label, cmd, value, title){
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.textContent = label;
+            btn.title = title || '';
+            // 버튼 클릭 시 편집 영역의 선택(드래그해둔 글자) 범위가 풀리지 않게 함
+            btn.addEventListener('mousedown', (e) => e.preventDefault());
+            btn.addEventListener('click', () => {
+              editable.focus();
+              document.execCommand(cmd, false, value);
+              block.text = editable.innerHTML;
+            });
+            return btn;
+          }
+
+          richToolbar.appendChild(addCmdBtn('B', 'bold', null, '굵게'));
+          richToolbar.appendChild(addCmdBtn('I', 'italic', null, '기울임'));
+          richToolbar.appendChild(addCmdBtn('U', 'underline', null, '밑줄'));
+
+          const colorInput = document.createElement('input');
+          colorInput.type = 'color';
+          colorInput.title = '글자색';
+          colorInput.value = '#131211';
+          colorInput.addEventListener('mousedown', (e) => e.preventDefault());
+          colorInput.addEventListener('input', () => {
+            editable.focus();
+            document.execCommand('foreColor', false, colorInput.value);
+            block.text = editable.innerHTML;
+          });
+          richToolbar.appendChild(colorInput);
+
+          const fontSelect = document.createElement('select');
+          fontSelect.title = '글꼴';
+          [
+            ['기본 글꼴', ''],
+            ['고딕', 'Work Sans, sans-serif'],
+            ['세리프', 'Fraunces, serif'],
+            ['필기체', 'Yellowtail, cursive'],
+          ].forEach(([label, value]) => {
+            const opt = document.createElement('option');
+            opt.textContent = label; opt.value = value;
+            fontSelect.appendChild(opt);
+          });
+          fontSelect.addEventListener('mousedown', (e) => e.stopPropagation());
+          fontSelect.addEventListener('change', () => {
+            editable.focus();
+            if (fontSelect.value) document.execCommand('fontName', false, fontSelect.value);
+            block.text = editable.innerHTML;
+          });
+          richToolbar.appendChild(fontSelect);
+
+          body.append(richToolbar, editable);
         } else {
           const img = document.createElement('img');
           img.src = block.src;
