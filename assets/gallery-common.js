@@ -103,15 +103,45 @@ function initSiteNav({ homeHref, activeKey }){
     contactLi.appendChild(a);
   });
 
+  // 다크모드 전환 버튼 - 상담문의/아이콘 묶음 안에 같이 넣음
+  const themeBtn = document.createElement('button');
+  themeBtn.type = 'button';
+  themeBtn.className = 'nav-icon nav-theme-toggle';
+  themeBtn.setAttribute('aria-label', '다크모드 전환');
+  themeBtn.addEventListener('click', () => {
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+  });
+  contactLi.appendChild(themeBtn);
+  updateThemeButtonIcon(themeBtn);
+
   ul.appendChild(contactLi);
 
-  // 모바일에서 항목 하나를 탭하면 메뉴가 자동으로 닫히게
+  // 모바일에서 항목 하나를 탭하면 메뉴가 자동으로 닫히게 (다크모드 버튼은 예외 - 눌러도 메뉴 유지)
   ul.addEventListener('click', (e) => {
+    if (e.target.closest('.nav-theme-toggle')) return;
     if (e.target.closest('a')) menuEl.classList.remove('is-open');
   });
 
   menuEl.appendChild(toggleBtn);
   menuEl.appendChild(ul);
+}
+
+const THEME_ICONS = {
+  light: `<svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M4.6 4.6l1.7 1.7M17.7 17.7l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.6 19.4l1.7-1.7M17.7 6.3l1.7-1.7"/></svg>`,
+  dark: `<svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor" stroke="none"><path d="M20.5 14.6c-1 .4-2 .6-3.1.6-5 0-9-4-9-9 0-1.1.2-2.1.6-3.1C5.1 4.1 2.5 7.6 2.5 11.7c0 5 4 9 9 9 4.1 0 7.6-2.6 8.8-6.2-.1 0-.2.1-.3.1z"/></svg>`,
+};
+
+function updateThemeButtonIcon(btn){
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  // 지금 상태가 아니라 "눌렀을 때 바뀔 상태"의 아이콘을 보여줌 (라이트면 달, 다크면 해)
+  btn.innerHTML = current === 'dark' ? THEME_ICONS.light : THEME_ICONS.dark;
+}
+
+function setTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('site_theme', theme);
+  document.querySelectorAll('.nav-theme-toggle').forEach(updateThemeButtonIcon);
 }
 
 async function fetchManifest(imagesFolder){

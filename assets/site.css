@@ -9,6 +9,13 @@
   --accent:#3b4b6b;
   --nav-h: 64px;
 }
+:root[data-theme="dark"]{
+  --ink:#f2f0ea;
+  --paper:#17161a;
+  --line:#332f30;
+  --muted:#9a948e;
+  --accent:#8fa6d6;
+}
 *{ box-sizing:border-box; }
 html,body{ margin:0; padding:0; }
 body{
@@ -16,16 +23,20 @@ body{
   color:var(--ink);
   font-family:'Work Sans', sans-serif;
   -webkit-font-smoothing:antialiased;
+  transition:background-color .2s ease, color .2s ease;
 }
 img{ display:block; max-width:100%; }
 a{ color:inherit; text-decoration:none; }
+
+:root{ --nav-bg: rgba(250,249,246,0.86); }
+:root[data-theme="dark"]{ --nav-bg: rgba(23,22,26,0.86); }
 
 header.site-nav{
   position:sticky; top:0; z-index:100;
   height:var(--nav-h);
   display:flex; align-items:center; justify-content:space-between;
   padding:0 28px;
-  background:rgba(250,249,246,0.86);
+  background:var(--nav-bg);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
@@ -57,14 +68,17 @@ nav.menu a::after{
 nav.menu a:hover::after, nav.menu a.active::after{ transform:scaleX(1); transform-origin:left; }
 nav.menu a.active{ color:var(--accent); }
 
-nav.menu a.nav-icon{
+nav.menu a.nav-icon,
+nav.menu button.nav-icon{
   display:flex; align-items:center; justify-content:center;
   width:28px; height:28px;
   color:var(--ink);
   opacity:0.75;
+  background:none; border:none; padding:0; cursor:pointer; font:inherit;
   transition:opacity .2s ease, color .2s ease;
 }
-nav.menu a.nav-icon:hover{ opacity:1; color:var(--accent); }
+nav.menu a.nav-icon:hover,
+nav.menu button.nav-icon:hover{ opacity:1; color:var(--accent); }
 nav.menu a.nav-icon::after{ display:none; } /* 아이콘 밑줄 효과는 제외 */
 nav.menu a.nav-icon.is-disabled{ opacity:0.3; cursor:default; pointer-events:none; }
 
