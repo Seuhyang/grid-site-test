@@ -3,44 +3,376 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script>
-(function(){
-  var t = localStorage.getItem('site_theme');
-  if (t) document.documentElement.setAttribute('data-theme', t);
-  else if (window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  }
-})();
-</script>
 <title>Empower Design</title>
-<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
-<link rel="icon" type="image/png" sizes="512x512" href="assets/favicon-512.png">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon-512.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Oswald:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="assets/site.css">
-<link rel="stylesheet" href="assets/gallery.css">
-<link rel="stylesheet" href="assets/index.css">
+<style>
+  :root{
+    --ink:#131211;
+    --paper:#faf9f6;
+    --line:#e2ded4;
+    --muted:#8a8478;
+    --accent:#3b4b6b;
+    --nav-h: 64px;
+  }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Work Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  img{ display:block; max-width:100%; }
+  a{ color:inherit; text-decoration:none; }
+
+  header.site-nav{
+    position:sticky; top:0; z-index:100;
+    height:var(--nav-h);
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 28px;
+    background:rgba(250,249,246,0.86);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .brand{
+    display:flex; align-items:baseline; gap:8px;
+    line-height:1;
+  }
+  .brand .word-empower{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    font-size:22px;
+    color:#e2431f;
+    -webkit-text-stroke:1px #7a1f10;
+    letter-spacing:0.01em;
+  }
+  .brand .word-design{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    font-size:12px;
+    letter-spacing:0.18em;
+    color:var(--ink);
+  }
+  @media (max-width:480px){
+    .brand .word-empower{ font-size:18px; }
+    .brand .word-design{ font-size:10px; }
+  }
+  nav.menu ul{ list-style:none; display:flex; gap:28px; margin:0; padding:0; }
+  nav.menu a{
+    font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ink); padding:6px 2px; position:relative;
+  }
+  nav.menu a::after{
+    content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+    background:var(--accent); transform:scaleX(0); transform-origin:right;
+    transition:transform .25s ease;
+  }
+  nav.menu a:hover::after, nav.menu a.active::after{ transform:scaleX(1); transform-origin:left; }
+  nav.menu a.active{ color:var(--accent); }
+  @media (max-width:480px){
+    header.site-nav{ padding:0 16px; }
+    nav.menu ul{ gap:16px; }
+    nav.menu a{ font-size:11.5px; }
+  }
+
+  /* ---------- 그룹 제목 ---------- */
+  .group-header{
+    padding:40px 28px 8px;
+    max-width:1400px;
+    margin:0 auto;
+  }
+  .group-header .back-link{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:0.06em;
+    color:var(--muted);
+    margin-bottom:14px;
+  }
+  .group-header .back-link:hover{ color:var(--ink); }
+  .group-header h1{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-style:italic;
+    font-size:clamp(22px, 4vw, 32px);
+    margin:0 0 24px;
+  }
+  @media (max-width:480px){
+    .group-header{ padding:24px 16px 4px; }
+  }
+
+  /* ---------- 그룹 내 사진들 ---------- */
+  main.gallery{ width:100%; }
+  .gallery-item{
+    position:relative; width:100%;
+    overflow:hidden; border-bottom:1px solid var(--line);
+    cursor:zoom-in; background:var(--line);
+  }
+  .gallery-item img{
+    display:block; width:100%; height:auto;
+    opacity:1;
+  }
+  .gallery-item img.is-loading{
+    opacity:0; transform:scale(1.02);
+  }
+  .gallery-item img.is-visible{
+    opacity:1; transform:scale(1);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+
+  @media (min-width:900px){
+    main.gallery{
+      max-width:1400px; margin:0 auto;
+      display:grid; grid-template-columns: repeat(3, 1fr);
+      gap:2px; background:var(--line);
+    }
+    .gallery-item{ aspect-ratio: 4 / 5; border-bottom:none; }
+    .gallery-item img{ width:100%; height:100%; object-fit:cover; }
+  }
+  @media (min-width:1400px){
+    main.gallery{ grid-template-columns: repeat(4, 1fr); }
+  }
+
+  /* ---------- 라이트박스 ---------- */
+  .lightbox{
+    position:fixed; inset:0; z-index:1000;
+    background:rgba(19,18,17,0.97);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .lightbox.is-open{ opacity:1; pointer-events:auto; }
+  .lightbox img{
+    max-width:min(92vw, 900px);
+    max-height:82vh;
+    width:auto; height:auto;
+    object-fit:contain;
+    user-select:none; -webkit-user-select:none;
+  }
+  .lightbox .lb-close,
+  .lightbox .lb-prev,
+  .lightbox .lb-next{
+    position:absolute; background:transparent; border:none;
+    color:#f2f0ea; cursor:pointer; padding:12px; line-height:0;
+    opacity:0.75; transition:opacity .2s ease;
+  }
+  .lightbox .lb-close:hover,
+  .lightbox .lb-prev:hover,
+  .lightbox .lb-next:hover{ opacity:1; }
+  .lightbox .lb-close{ top:14px; right:14px; }
+  .lightbox .lb-prev{ left:6px; top:50%; transform:translateY(-50%); }
+  .lightbox .lb-next{ right:6px; top:50%; transform:translateY(-50%); }
+  .lightbox .lb-prev svg,
+  .lightbox .lb-next svg,
+  .lightbox .lb-close svg{ width:26px; height:26px; }
+
+  /* 모바일: 화살표 숨김 (스와이프로만 이동), 사진은 좌우 꽉 차게 */
+  @media (max-width:767px){
+    .lightbox .lb-prev,
+    .lightbox .lb-next{ display:none; }
+    .lightbox img{
+      max-width:100%;
+      width:100%;
+      max-height:100vh;
+    }
+  }
+</style>
 </head>
 <body>
 
 <header class="site-nav">
-  <a class="brand" href="./" aria-label="Empower Design 홈으로">
-    <span class="word-empower">EmpoweR</span>
+  <a class="brand" href="../" aria-label="Empower Design 홈으로">
+    <span class="word-empower">Empower</span>
     <span class="word-design">DESIGN</span>
   </a>
-  <nav class="menu" id="siteMenu"></nav>
+  <nav class="menu">
+    <ul>
+      <li><a href="../">홈</a></li>
+      <li><a href="#">A</a></li>
+      <li><a href="#">B</a></li>
+      <li><a href="#">C</a></li>
+      <li><a href="#">문의</a></li>
+    </ul>
+  </nav>
 </header>
 
+<div class="group-header">
+  <a class="back-link" href="../">← 목록으로</a>
+  <h1 id="groupTitle">&nbsp;</h1>
+</div>
+
 <main class="gallery" id="gallery">
-  <!-- assets/index.js 가 그룹(=사진 묶음) 표지를 자동으로 채워 넣습니다 -->
+  <!-- JS가 이 그룹에 속한 사진들을 채워 넣습니다 -->
 </main>
 
-<script src="assets/gallery-common.js"></script>
-<script src="assets/index.js"></script>
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" aria-label="닫기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
+  <button class="lb-prev" id="lbPrev" aria-label="이전 사진">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <img id="lbImage" src="" alt="">
+  <button class="lb-next" id="lbNext" aria-label="다음 사진">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+</div>
+
+<script>
+const IMAGES_FOLDER = "../images";
+
+async function fetchGroup(slug){
+  const res = await fetch(`${IMAGES_FOLDER}/manifest.json`);
+  if (!res.ok) throw new Error(`매니페스트를 불러오지 못했습니다 (status: ${res.status})`);
+  const data = await res.json();
+  return (data.groups || []).find(g => g.slug === slug) || null;
+}
+
+const galleryEl = document.getElementById('gallery');
+const titleEl   = document.getElementById('groupTitle');
+
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.remove('is-loading');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { rootMargin: '0px 0px -5% 0px', threshold: 0.05 });
+
+let PHOTOS = []; // 이 그룹에 속한 사진 src 배열 (라이트박스가 이 안에서만 이동)
+
+function renderGroup(group){
+  document.title = `${group.title} · Empower Design`;
+  titleEl.textContent = group.title;
+
+  PHOTOS = group.photos.map(file => ({
+    src: `${IMAGES_FOLDER}/${file}`,
+    alt: group.title
+  }));
+
+  galleryEl.innerHTML = '';
+  PHOTOS.forEach((item, i) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'gallery-item';
+    wrap.dataset.index = i;
+
+    const img = document.createElement('img');
+    img.src = item.src;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = item.alt;
+
+    wrap.appendChild(img);
+    galleryEl.appendChild(wrap);
+  });
+
+  document.querySelectorAll('.gallery-item img').forEach(img => {
+    // 페이드인은 연출용입니다. 어떤 환경에서든(느린 네트워크, 인앱브라우저 등)
+    // 이미지는 기본 상태로 항상 보이고, 안 걸리면 그냥 안 걸릴 뿐입니다.
+    img.classList.add('is-loading');
+    revealObserver.observe(img);
+    setTimeout(() => img.classList.remove('is-loading'), 1200);
+  });
+}
+
+(async function init(){
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('g');
+  if (!slug) {
+    galleryEl.innerHTML = `<p style="padding:40px 20px; font-size:14px; color:var(--muted);">잘못된 주소입니다.</p>`;
+    return;
+  }
+  try {
+    const group = await fetchGroup(slug);
+    if (!group) {
+      galleryEl.innerHTML = `<p style="padding:40px 20px; font-size:14px; color:var(--muted);">해당 사진을 찾을 수 없습니다.</p>`;
+      return;
+    }
+    renderGroup(group);
+  } catch (err) {
+    console.error(err);
+    galleryEl.innerHTML = `<p style="padding:40px 20px; font-size:14px; color:var(--muted);">사진을 불러오지 못했습니다.</p>`;
+  }
+})();
+
+/* ---------------- 라이트박스 로직 (이 페이지 = 이 그룹 안에서만 이동) ---------------- */
+const lightbox = document.getElementById('lightbox');
+const lbImage   = document.getElementById('lbImage');
+const lbClose   = document.getElementById('lbClose');
+const lbPrev    = document.getElementById('lbPrev');
+const lbNext    = document.getElementById('lbNext');
+
+let currentIndex = 0;
+
+function openLightbox(index){
+  currentIndex = index;
+  updateLightboxImage();
+  lightbox.classList.add('is-open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  lightbox.classList.remove('is-open');
+  document.body.style.overflow = '';
+}
+function updateLightboxImage(){
+  const item = PHOTOS[currentIndex];
+  lbImage.src = item.src;
+  lbImage.alt = item.alt;
+}
+function showPrev(){
+  currentIndex = (currentIndex - 1 + PHOTOS.length) % PHOTOS.length;
+  updateLightboxImage();
+}
+function showNext(){
+  currentIndex = (currentIndex + 1) % PHOTOS.length;
+  updateLightboxImage();
+}
+
+galleryEl.addEventListener('click', (e) => {
+  const item = e.target.closest('.gallery-item');
+  if (!item) return;
+  openLightbox(Number(item.dataset.index));
+});
+
+lbClose.addEventListener('click', closeLightbox);
+lbPrev.addEventListener('click', showPrev);
+lbNext.addEventListener('click', showNext);
+
+lightbox.addEventListener('click', (e) => {
+  if (e.target === lightbox) closeLightbox();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (!lightbox.classList.contains('is-open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowLeft') showPrev();
+  if (e.key === 'ArrowRight') showNext();
+});
+
+let touchStartX = 0;
+let touchEndX = 0;
+const SWIPE_THRESHOLD = 50;
+
+lightbox.addEventListener('touchstart', (e) => {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+
+lightbox.addEventListener('touchend', (e) => {
+  touchEndX = e.changedTouches[0].screenX;
+  const delta = touchEndX - touchStartX;
+  if (Math.abs(delta) < SWIPE_THRESHOLD) return;
+  if (delta > 0) showPrev();
+  else showNext();
+}, { passive: true });
+</script>
 
 </body>
 </html>
