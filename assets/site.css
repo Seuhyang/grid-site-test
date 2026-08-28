@@ -37,7 +37,11 @@ header.site-nav{
   position:sticky; top:0; z-index:100;
   height:var(--nav-h);
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 40px;
+  box-sizing:border-box;
+  /* 배경(블러) 바는 화면 전체 폭을 유지하되, 안쪽 로고/메뉴는 사진 그리드
+     (main.gallery, max-width:1400px)와 같은 좌우 경계에서 정렬되도록
+     화면이 넓어질수록 좌우 padding이 함께 늘어나게 계산합니다. */
+  padding:0 max(40px, calc((100% - 1400px) / 2));
   background:var(--nav-bg);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
