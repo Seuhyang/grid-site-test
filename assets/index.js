@@ -38,6 +38,28 @@ function getOrderedGroups(groups){
   return groups;
 }
 
+// 관리자 페이지 "메인 화면 순서"에서 저장한 지정 순서 (images/main-order.txt).
+// 파일이 없으면 그냥 무시하고 위 SORT_MODE를 그대로 씁니다.
+async function getMainOrder(){
+  try {
+    const res = await fetch(`${IMAGES_FOLDER}/main-order.txt`);
+    if (!res.ok) return [];
+    const text = await res.text();
+    return text.split('\n').map(s => s.trim()).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
+function applyMainOrder(groups, order){
+  if (!order.length) return getOrderedGroups(groups);
+  const bySlug = new Map(groups.map(g => [g.slug, g]));
+  const pinned = order.map(slug => bySlug.get(slug)).filter(Boolean);
+  const pinnedSlugs = new Set(pinned.map(g => g.slug));
+  const rest = getOrderedGroups(groups.filter(g => !pinnedSlugs.has(g.slug)));
+  return [...pinned, ...rest];
+}
+
 const galleryEl = document.getElementById('gallery');
 const revealObserver = createRevealObserver();
 
@@ -89,7 +111,8 @@ if ('scrollRestoration' in history) {
   initSiteNav({ homeHref: './', activeKey: 'home' });
   try {
     const groups = await fetchManifest(IMAGES_FOLDER);
-    renderGallery(getOrderedGroups(groups));
+    const mainOrder = await getMainOrder();
+    renderGallery(applyMainOrder(groups, mainOrder));
     restoreScrollIfNeeded();
   } catch (err) {
     console.error(err);

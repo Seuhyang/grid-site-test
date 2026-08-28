@@ -7,7 +7,7 @@
   --line:#e2ded4;
   --muted:#8a8478;
   --accent:#3b4b6b;
-  --nav-h: 64px;
+  --nav-h: 76px;
 }
 :root[data-theme="dark"]{
   --ink:#f2f0ea;
@@ -23,8 +23,10 @@ body{
   color:var(--ink);
   font-family:'Work Sans', sans-serif;
   -webkit-font-smoothing:antialiased;
-  transition:background-color .2s ease, color .2s ease;
+  opacity:0;
+  transition:opacity .35s ease, background-color .2s ease, color .2s ease;
 }
+body.is-ready{ opacity:1; }
 img{ display:block; max-width:100%; }
 a{ color:inherit; text-decoration:none; }
 
@@ -35,7 +37,7 @@ header.site-nav{
   position:sticky; top:0; z-index:100;
   height:var(--nav-h);
   display:flex; align-items:center; justify-content:space-between;
-  padding:0 28px;
+  padding:0 40px;
   background:var(--nav-bg);
   backdrop-filter:blur(10px);
   -webkit-backdrop-filter:blur(10px);
@@ -55,13 +57,14 @@ header.site-nav{
   letter-spacing:0.32em;
   color:var(--ink);
 }
-nav.menu ul{ list-style:none; display:flex; gap:28px; margin:0; padding:0; }
+nav.menu ul{ list-style:none; display:flex; align-items:center; gap:40px; margin:0; padding:0; }
 nav.menu a{
-  font-size:13px; letter-spacing:0.08em; text-transform:uppercase;
-  color:var(--ink); padding:6px 2px; position:relative;
+  font-size:13px; letter-spacing:0.12em; text-transform:uppercase;
+  font-weight:600;
+  color:var(--ink); padding:8px 1px; position:relative;
 }
 nav.menu a::after{
-  content:""; position:absolute; left:0; right:0; bottom:-2px; height:1px;
+  content:""; position:absolute; left:0; right:0; bottom:0; height:2px;
   background:var(--accent); transform:scaleX(0); transform-origin:right;
   transition:transform .25s ease;
 }
@@ -71,26 +74,29 @@ nav.menu a.active{ color:var(--accent); }
 nav.menu a.nav-icon,
 nav.menu button.nav-icon{
   display:flex; align-items:center; justify-content:center;
-  width:28px; height:28px;
+  width:34px; height:34px;
+  border-radius:50%;
   color:var(--ink);
-  opacity:0.75;
-  background:none; border:none; padding:0; cursor:pointer; font:inherit;
-  transition:opacity .2s ease, color .2s ease;
+  background:var(--line);
+  opacity:1;
+  border:none; padding:0; cursor:pointer; font:inherit;
+  transition:background-color .2s ease, color .2s ease, transform .2s ease;
 }
 nav.menu a.nav-icon:hover,
-nav.menu button.nav-icon:hover{ opacity:1; color:var(--accent); }
+nav.menu button.nav-icon:hover{ background:var(--accent); color:#fff; transform:scale(1.08); }
 nav.menu a.nav-icon::after{ display:none; } /* 아이콘 밑줄 효과는 제외 */
-nav.menu a.nav-icon.is-disabled{ opacity:0.3; cursor:default; pointer-events:none; }
+nav.menu a.nav-icon.is-disabled{ opacity:0.35; cursor:default; pointer-events:none; }
+nav.menu a.nav-icon.is-disabled:hover{ background:var(--line); color:var(--ink); transform:none; }
 
 nav.menu li.nav-contact-group{
   display:flex;
   align-items:center;
-  gap:14px;
-  padding-left:18px;
+  gap:12px;
+  padding-left:24px;
   margin-left:4px;
   border-left:1px solid var(--line);
 }
-nav.menu li.nav-contact-group a{ padding:6px 0; }
+nav.menu li.nav-contact-group a{ padding:8px 0; }
 nav.menu li.nav-contact-group a:not(.nav-icon)::after{ display:none; } /* 상담문의는 밑줄 강조 없음(비활성) */
 
 /* 모바일 햄버거 버튼 - 넓은 화면에서는 숨김 */

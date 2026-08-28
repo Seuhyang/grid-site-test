@@ -1,8 +1,8 @@
 /*
-  관리자 백엔드 (Cloudflare Worker)
+  Empower Design 관리자 백엔드 (Cloudflare Worker)
   ------------------------------------------------
   GitHub 토큰과 관리자 비밀번호는 여기(서버)에만 저장되고,
-  브라우저에는 절대 노출되지 않습니다.
+  브라우저(admin-b.html)에는 절대 노출되지 않습니다.
 
   필요한 환경변수(Secret):
     ADMIN_PASSWORD  - 관리자 페이지 로그인 비밀번호
@@ -30,6 +30,7 @@ function json(obj, status = 200){
 async function gh(path, env, opts = {}){
   return fetch(`https://api.github.com${path}`, {
     ...opts,
+    cache: 'no-store', // 방금 커밋한 내용을 바로 다시 조회할 때 예전 응답이 캐시되는 것을 방지
     headers: {
       'Authorization': `Bearer ${env.GITHUB_TOKEN}`,
       'Accept': 'application/vnd.github+json',

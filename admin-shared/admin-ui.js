@@ -568,13 +568,124 @@ const AdminUI = (() => {
     host.appendChild(card);
   }
 
+  let mainOrder = []; // 메인 화면에 나올 그룹 slug들의 순서 (지정 안 한 나머지는 최신순으로 뒤에 자동으로 붙음)
+
+  async function loadMainOrder(){
+    try {
+      const res = await fetch(`../images/main-order.txt?t=${Date.now()}`);
+      if (!res.ok) return [];
+      const text = await res.text();
+      return text.split('\n').map(s => s.trim()).filter(Boolean);
+    } catch {
+      return [];
+    }
+  }
+
+  function renderMainOrderEditor(api){
+    const host = document.getElementById('mainOrderEditor');
+    if (!host) return;
+    host.innerHTML = '';
+
+    if (!allGroups.length){
+      host.innerHTML = '<p class="hint">아직 그룹이 없습니다.</p>';
+      return;
+    }
+
+    // mainOrder에 없는(아직 순서를 안 정한) 그룹은 최신순으로 자동으로 맨 뒤에 붙여줌
+    const validSlugs = new Set(allGroups.map(g => g.slug));
+    mainOrder = mainOrder.filter(slug => validSlugs.has(slug));
+    const placed = new Set(mainOrder);
+    const rest = [...allGroups]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .map(g => g.slug)
+      .filter(slug => !placed.has(slug));
+    mainOrder = [...mainOrder, ...rest];
+
+    const list = document.createElement('div');
+    list.className = 'order-list';
+
+    function draw(){
+      list.innerHTML = '';
+      mainOrder.forEach((slug, idx) => {
+        const group = allGroups.find(g => g.slug === slug);
+        if (!group) return;
+
+        const row = document.createElement('div');
+        row.className = 'order-row';
+
+        const num = document.createElement('span');
+        num.className = 'order-num';
+        num.textContent = idx + 1;
+
+        const thumb = document.createElement('img');
+        thumb.src = `../images/${group.cover}`;
+
+        const label = document.createElement('span');
+        label.className = 'order-label';
+        label.textContent = group.title;
+
+        const controls = document.createElement('div');
+        controls.className = 'order-controls';
+
+        const upBtn = document.createElement('button');
+        upBtn.type = 'button';
+        upBtn.textContent = '▲';
+        upBtn.disabled = idx === 0;
+        upBtn.addEventListener('click', () => {
+          [mainOrder[idx - 1], mainOrder[idx]] = [mainOrder[idx], mainOrder[idx - 1]];
+          draw();
+        });
+
+        const downBtn = document.createElement('button');
+        downBtn.type = 'button';
+        downBtn.textContent = '▼';
+        downBtn.disabled = idx === mainOrder.length - 1;
+        downBtn.addEventListener('click', () => {
+          [mainOrder[idx + 1], mainOrder[idx]] = [mainOrder[idx], mainOrder[idx + 1]];
+          draw();
+        });
+
+        controls.append(upBtn, downBtn);
+        row.append(num, thumb, label, controls);
+        list.appendChild(row);
+      });
+    }
+    draw();
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = '이 순서로 저장';
+
+    const statusEl = document.createElement('p');
+    statusEl.className = 'status';
+
+    saveBtn.addEventListener('click', async () => {
+      saveBtn.disabled = true;
+      statusEl.className = 'status';
+      statusEl.textContent = '저장 중...';
+      try {
+        await api.putFile('images/main-order.txt', utf8ToBase64(mainOrder.join('\n')), '메인 화면 순서 저장');
+        statusEl.textContent = '저장했습니다. 실제 사이트에는 1분 내로 반영됩니다.';
+        statusEl.className = 'status ok';
+      } catch (err) {
+        statusEl.textContent = err.message;
+        statusEl.className = 'status error';
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    host.append(list, saveBtn, statusEl);
+  }
+
   async function loadGroups(api){
     const groupsList = document.getElementById('groupsList');
     groupsList.innerHTML = '불러오는 중...';
     const res = await fetch(`../images/manifest.json?t=${Date.now()}`);
     const data = await res.json();
     allGroups = data.groups || [];
+    mainOrder = await loadMainOrder();
     renderGroupBrowser(api);
+    renderMainOrderEditor(api);
   }
 
   // 로그인 성공 후 각 admin 페이지가 호출하는 진입점

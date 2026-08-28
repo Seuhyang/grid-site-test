@@ -5,7 +5,42 @@
    - wireLazyReveal(): 이미지에 안전한(브라우저/네트워크 무관) 지연노출 연결
    - initSiteNav(): 상단 메뉴 + 카카오채널/인스타 아이콘 렌더링 (여기 한 곳만 고치면
      index.html과 모든 그룹 페이지에 다 반영됩니다)
+   - 페이지 진입/이동 시 부드러운 페이드 전환 (아래 initPageFade)
 */
+
+// ---------------- 페이지 진입/이동 페이드 전환 ----------------
+// CSS는 site.css의 body{opacity:0} + body.is-ready{opacity:1} 규칙과 짝을 이룹니다.
+(function initPageFade(){
+  function reveal(){ document.body.classList.add('is-ready'); }
+  // 스크립트가 body 하단에서 실행되므로 이 시점엔 이미 DOM이 준비돼 있음 - 한 프레임 뒤에 표시
+  requestAnimationFrame(() => requestAnimationFrame(reveal));
+  // 무슨 이유로든 위 코드가 안 걸려도 콘텐츠가 영영 안 보이는 일은 없도록 하는 안전장치
+  setTimeout(reveal, 800);
+  // 뒤로가기 등으로 캐시된 페이지가 복원될 때도 확실히 보이게
+  window.addEventListener('pageshow', reveal);
+})();
+
+function isSameOriginNavigableLink(link){
+  if (!link || link.target === '_blank' || link.hasAttribute('download')) return false;
+  const rawHref = link.getAttribute('href') || '';
+  if (!rawHref || rawHref.startsWith('#') || rawHref.startsWith('mailto:') || rawHref.startsWith('tel:')) return false;
+  try {
+    return new URL(link.href, location.href).origin === location.origin;
+  } catch {
+    return false;
+  }
+}
+
+// 같은 사이트 안의 링크를 클릭하면, 살짝 페이드아웃 한 뒤에 이동합니다.
+document.addEventListener('click', (e) => {
+  if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  const link = e.target.closest('a');
+  if (!isSameOriginNavigableLink(link)) return;
+  e.preventDefault();
+  document.body.classList.remove('is-ready');
+  const dest = link.href;
+  setTimeout(() => { location.href = dest; }, 220);
+});
 
 // 방문자 통계 (GoatCounter, 무료·회원가입 없이도 카운터만 심을 수 있음)
 // https://www.goatcounter.com 에서 사이트 코드를 만든 뒤 여기에 넣으면
