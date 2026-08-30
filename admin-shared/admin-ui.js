@@ -688,11 +688,171 @@ const AdminUI = (() => {
     renderMainOrderEditor(api);
   }
 
+  /* ------------------------------------------------------------------
+     회사소개(content/about.json) 문구 관리.
+     실제 화면(about/index.html)이 읽어가는 파일과 완전히 같은 형태를 그대로
+     불러와서, 폼으로 고친 뒤 같은 자리에 다시 저장합니다. */
+
+  async function loadAboutContent(){
+    try {
+      const res = await fetch(`../content/about.json?t=${Date.now()}`);
+      if (!res.ok) throw new Error();
+      return await res.json();
+    } catch {
+      // 파일이 아직 없거나 못 읽어와도 편집 화면 자체는 빈 값으로 열 수 있게 함
+      return { eyebrow: '', heroTitle: '', heroSubtitle: '', paragraphs: [], highlights: [] };
+    }
+  }
+
+  function renderAboutEditor(api, aboutData){
+    const host = document.getElementById('aboutEditor');
+    if (!host) return; // 이 admin 페이지에 회사소개 편집 영역이 없으면 그냥 건너뜀
+    host.innerHTML = '';
+
+    const eyebrowInput = document.createElement('input');
+    eyebrowInput.type = 'text';
+    eyebrowInput.value = aboutData.eyebrow || '';
+    eyebrowInput.placeholder = '예: ABOUT EMPOWER DESIGN';
+
+    const heroTitleInput = document.createElement('textarea');
+    heroTitleInput.rows = 2;
+    heroTitleInput.value = aboutData.heroTitle || '';
+    heroTitleInput.placeholder = '큰 제목 (Enter로 줄바꿈 가능)';
+
+    const heroSubtitleInput = document.createElement('textarea');
+    heroSubtitleInput.rows = 2;
+    heroSubtitleInput.value = aboutData.heroSubtitle || '';
+    heroSubtitleInput.placeholder = '제목 아래 한 줄 설명';
+
+    // 소개 문단들 - 여러 개를 넣고 뺄 수 있음
+    const paraListEl = document.createElement('div');
+    paraListEl.className = 'about-para-list';
+
+    function addParaRow(text = ''){
+      const row = document.createElement('div');
+      row.className = 'about-para-row';
+      const ta = document.createElement('textarea');
+      ta.rows = 3;
+      ta.value = text;
+      ta.placeholder = '소개 문단 내용';
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'secondary';
+      removeBtn.textContent = '× 이 문단 삭제';
+      removeBtn.addEventListener('click', () => row.remove());
+      row.append(ta, removeBtn);
+      paraListEl.appendChild(row);
+    }
+    (aboutData.paragraphs && aboutData.paragraphs.length ? aboutData.paragraphs : ['']).forEach(addParaRow);
+
+    const addParaBtn = document.createElement('button');
+    addParaBtn.type = 'button';
+    addParaBtn.className = 'secondary';
+    addParaBtn.textContent = '+ 문단 추가';
+    addParaBtn.addEventListener('click', () => addParaRow(''));
+
+    // 강조 카드(기획/제작/시공 같은 3칸) - 여러 개를 넣고 뺄 수 있음
+    const highlightListEl = document.createElement('div');
+    highlightListEl.className = 'about-highlight-list';
+
+    function addHighlightRow(title = '', desc = ''){
+      const row = document.createElement('div');
+      row.className = 'about-highlight-row';
+      const titleInput = document.createElement('input');
+      titleInput.type = 'text';
+      titleInput.value = title;
+      titleInput.placeholder = '카드 제목 (예: 기획)';
+      const descInput = document.createElement('textarea');
+      descInput.rows = 2;
+      descInput.value = desc;
+      descInput.placeholder = '카드 설명';
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'secondary';
+      removeBtn.textContent = '× 이 카드 삭제';
+      removeBtn.addEventListener('click', () => row.remove());
+      row.append(titleInput, descInput, removeBtn);
+      highlightListEl.appendChild(row);
+    }
+    (aboutData.highlights && aboutData.highlights.length ? aboutData.highlights : [{ title: '', desc: '' }])
+      .forEach(h => addHighlightRow(h.title, h.desc));
+
+    const addHighlightBtn = document.createElement('button');
+    addHighlightBtn.type = 'button';
+    addHighlightBtn.className = 'secondary';
+    addHighlightBtn.textContent = '+ 카드 추가';
+    addHighlightBtn.addEventListener('click', () => addHighlightRow('', ''));
+
+    const saveBtn = document.createElement('button');
+    saveBtn.textContent = '회사소개 저장';
+
+    const statusEl = document.createElement('p');
+    statusEl.className = 'status';
+
+    saveBtn.addEventListener('click', async () => {
+      const payload = {
+        eyebrow: eyebrowInput.value.trim(),
+        heroTitle: heroTitleInput.value,
+        heroSubtitle: heroSubtitleInput.value.trim(),
+        paragraphs: Array.from(paraListEl.querySelectorAll('textarea'))
+          .map(ta => ta.value.trim())
+          .filter(Boolean),
+        highlights: Array.from(highlightListEl.querySelectorAll('.about-highlight-row'))
+          .map(row => ({
+            title: row.querySelector('input').value.trim(),
+            desc: row.querySelector('textarea').value.trim()
+          }))
+          .filter(h => h.title)
+      };
+
+      saveBtn.disabled = true;
+      statusEl.className = 'status';
+      statusEl.textContent = '저장 중...';
+      try {
+        await api.putFile(
+          'content/about.json',
+          utf8ToBase64(JSON.stringify(payload, null, 2)),
+          '회사소개 문구 수정'
+        );
+        statusEl.textContent = '저장했습니다. 실제 사이트에는 1분 내로 반영됩니다.';
+        statusEl.className = 'status ok';
+      } catch (err) {
+        statusEl.textContent = err.message;
+        statusEl.className = 'status error';
+      } finally {
+        saveBtn.disabled = false;
+      }
+    });
+
+    host.append(
+      Object.assign(document.createElement('label'), { textContent: '작은 라벨 (제목 위에 작게 표시)' }),
+      eyebrowInput,
+      Object.assign(document.createElement('label'), { textContent: '큰 제목' }),
+      heroTitleInput,
+      Object.assign(document.createElement('label'), { textContent: '제목 아래 설명' }),
+      heroSubtitleInput,
+      Object.assign(document.createElement('label'), { textContent: '소개 문단' }),
+      paraListEl,
+      addParaBtn,
+      Object.assign(document.createElement('label'), { textContent: '강조 카드 (기획 · 제작 · 시공 등)' }),
+      highlightListEl,
+      addHighlightBtn,
+      saveBtn,
+      statusEl
+    );
+  }
+
+  async function loadAbout(api){
+    const aboutData = await loadAboutContent();
+    renderAboutEditor(api, aboutData);
+  }
+
   // 로그인 성공 후 각 admin 페이지가 호출하는 진입점
   function start(api){
     wireNewGroupUpload(api);
     document.getElementById('refreshBtn').addEventListener('click', () => loadGroups(api));
     loadGroups(api);
+    loadAbout(api);
   }
 
   return { start, loadGroups };
