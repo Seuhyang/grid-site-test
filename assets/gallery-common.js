@@ -63,7 +63,7 @@ const NAV_ITEMS = [
   { label: '메인', hrefKey: 'home' },
   { label: '회사 소개', hrefKey: 'about' },
   { label: '간판 종류', href: '#' },
-  { label: '시공 사례', href: '#' },
+  { label: '시공 사례', hrefKey: 'case' },
 ];
 
 // 카카오채널 링크는 나중에 만들어지면 이 값만 채워 넣으면 자동으로 활성화됩니다.
@@ -77,7 +77,7 @@ const ICONS = {
   instagram: `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="0.9" fill="currentColor" stroke="none"/></svg>`,
 };
 
-function initSiteNav({ homeHref, aboutHref, activeKey }){
+function initSiteNav({ homeHref, aboutHref, caseHref, activeKey }){
   const menuEl = document.getElementById('siteMenu');
   const brandEl = document.querySelector('.brand');
   if (brandEl) brandEl.setAttribute('href', homeHref);
@@ -100,6 +100,7 @@ function initSiteNav({ homeHref, aboutHref, activeKey }){
     const a = document.createElement('a');
     if (item.hrefKey === 'home') a.href = homeHref;
     else if (item.hrefKey === 'about') a.href = aboutHref || '#';
+    else if (item.hrefKey === 'case') a.href = caseHref || '#';
     else a.href = item.href;
     a.textContent = item.label;
     if (item.hrefKey === activeKey) a.classList.add('active');

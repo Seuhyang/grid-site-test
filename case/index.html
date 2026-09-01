@@ -12,7 +12,7 @@
   }
 })();
 </script>
-<title>회사 소개 · Empower Design</title>
+<title>시공 사례 · Empower Design</title>
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="icon" type="image/png" sizes="512x512" href="../assets/favicon-512.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
@@ -22,7 +22,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Yellowtail&family=Oswald:wght@600;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;1,9..144,400&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="../assets/site.css?v=20260829">
-<link rel="stylesheet" href="../assets/about.css?v=20260830">
+<link rel="stylesheet" href="../assets/gallery.css?v=20260829">
+<link rel="stylesheet" href="../assets/lightbox.css?v=20260831">
+<link rel="stylesheet" href="../assets/case.css?v=20260831">
 </head>
 <body>
 
@@ -34,20 +36,27 @@
   <nav class="menu" id="siteMenu"></nav>
 </header>
 
-<main>
-  <section class="about-hero">
-    <p class="eyebrow" id="eyebrow"></p>
-    <h1 id="heroTitle">&nbsp;</h1>
-    <p class="subtitle" id="heroSubtitle"></p>
-  </section>
-
-  <section class="about-body" id="aboutBody"></section>
-
-  <section class="about-highlights" id="aboutHighlights"></section>
+<main class="gallery" id="gallery">
+  <!-- assets/case.js 가 그룹 대표사진들을 채워 넣습니다 -->
 </main>
 
+<div class="lightbox" id="lightbox">
+  <button class="lb-close" id="lbClose" aria-label="닫기">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 5l14 14M19 5L5 19"/></svg>
+  </button>
+  <button class="lb-prev" id="lbPrev" aria-label="이전 사진">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M15 5l-7 7 7 7"/></svg>
+  </button>
+  <img id="lbImage" src="" alt="">
+  <button class="lb-next" id="lbNext" aria-label="다음 사진">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 5l7 7-7 7"/></svg>
+  </button>
+  <span class="lb-counter" id="lbCounter"></span>
+  <a class="lb-detail-link" id="lbDetailLink" href="#">상세페이지 보기 →</a>
+</div>
+
 <script src="../assets/gallery-common.js?v=20260831"></script>
-<script src="../assets/about.js?v=20260831"></script>
+<script src="../assets/case.js?v=20260831"></script>
 
 </body>
 </html>

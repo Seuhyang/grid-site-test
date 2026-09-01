@@ -95,7 +95,7 @@ function getSlugFromLocation(){
 }
 
 (async function init(){
-  initSiteNav({ homeHref: '../../', aboutHref: '../../about/', activeKey: null });
+  initSiteNav({ homeHref: '../../', aboutHref: '../../about/', caseHref: '../../case/', activeKey: null });
   const slug = getSlugFromLocation();
   if (!slug) {
     galleryEl.innerHTML = `<p style="padding:40px 20px; font-size:14px; color:var(--muted);">잘못된 주소입니다.</p>`;

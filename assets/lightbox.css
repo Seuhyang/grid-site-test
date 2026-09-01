@@ -1,0 +1,41 @@
+/* /assets/lightbox.css
+   사진 팝업(라이트박스) 공용 스타일.
+   group/<slug>/index.html, case/index.html 등 라이트박스가 필요한
+   모든 페이지에서 공통으로 불러다 씁니다. */
+
+.lightbox{
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(19,18,17,0.97);
+  display:flex; align-items:center; justify-content:center;
+  opacity:0; pointer-events:none;
+  transition:opacity .25s ease;
+}
+.lightbox.is-open{ opacity:1; pointer-events:auto; }
+.lightbox img{
+  max-width:min(92vw, 900px);
+  max-height:82vh;
+  width:auto; height:auto;
+  object-fit:contain;
+  user-select:none; -webkit-user-select:none;
+}
+.lightbox .lb-close,
+.lightbox .lb-prev,
+.lightbox .lb-next{
+  position:absolute; background:transparent; border:none;
+  color:#f2f0ea; cursor:pointer; padding:12px; line-height:0;
+  opacity:0.75; transition:opacity .2s ease;
+}
+.lightbox .lb-close:hover,
+.lightbox .lb-prev:hover,
+.lightbox .lb-next:hover{ opacity:1; }
+.lightbox .lb-close{ top:14px; right:14px; }
+.lightbox .lb-prev{ left:6px; top:50%; transform:translateY(-50%); }
+.lightbox .lb-next{ right:6px; top:50%; transform:translateY(-50%); }
+.lightbox .lb-prev svg,
+.lightbox .lb-next svg,
+.lightbox .lb-close svg{ width:26px; height:26px; }
+
+@media (max-width:767px){
+  .lightbox .lb-prev, .lightbox .lb-next{ display:none; }
+  .lightbox img{ max-width:100%; width:100%; max-height:100vh; }
+}

@@ -1,0 +1,55 @@
+/* /assets/case.css
+   시공 사례(case/index.html) 전용 스타일.
+   메인 화면(index.css)과 달리 화면이 아무리 넓어져도 데스크톱에서는
+   항상 3칸으로 고정합니다 (4단으로 늘어나지 않음). */
+
+@media (min-width:900px){
+  main.gallery{
+    max-width:1400px; margin:0 auto;
+    display:grid; grid-template-columns: repeat(3, 1fr);
+    gap:2px; background:var(--line);
+  }
+  .gallery-item{ aspect-ratio: 4 / 5; border-bottom:none; }
+  .gallery-item img{ width:100%; height:100%; object-fit:cover; }
+}
+
+/* 그리드 위 마우스오버 타이틀 - index.css와 동일한 스타일 */
+.gallery-item .tile-title{
+  position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  text-align:center; padding:24px;
+  background:rgba(19,18,17,0.45);
+  color:#faf9f6;
+  font-family:'Fraunces', serif; font-style:italic; font-weight:300;
+  font-size:18px; letter-spacing:0.02em;
+  opacity:0; transition:opacity .25s ease;
+  pointer-events:none;
+}
+@media (hover:hover) and (pointer:fine){
+  .gallery-item:hover .tile-title{ opacity:1; }
+}
+
+/* -------- 팝업(라이트박스) 안에 추가되는 요소 --------
+   사진이 방해받지 않도록 아주 작고 옅게, 구석에만 배치합니다. */
+
+.lightbox .lb-counter{
+  position:absolute; left:50%; bottom:18px; transform:translateX(-50%);
+  color:#f2f0ea; opacity:0.65;
+  font-family:'Work Sans', sans-serif; font-size:12px; letter-spacing:0.04em;
+  pointer-events:none;
+}
+
+.lightbox .lb-detail-link{
+  position:absolute; right:16px; bottom:18px;
+  color:#f2f0ea; opacity:0.7;
+  font-family:'Work Sans', sans-serif; font-size:12.5px;
+  text-decoration:none; border-bottom:1px solid rgba(242,240,234,0.4);
+  padding-bottom:1px;
+  transition:opacity .2s ease;
+}
+.lightbox .lb-detail-link:hover{ opacity:1; }
+
+@media (max-width:767px){
+  .lightbox .lb-counter{ bottom:auto; top:14px; left:14px; transform:none; }
+  .lightbox .lb-detail-link{ bottom:auto; top:14px; right:52px; }
+}

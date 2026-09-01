@@ -108,7 +108,7 @@ if ('scrollRestoration' in history) {
 }
 
 (async function init(){
-  initSiteNav({ homeHref: './', aboutHref: 'about/', activeKey: 'home' });
+  initSiteNav({ homeHref: './', aboutHref: 'about/', caseHref: 'case/', activeKey: 'home' });
   try {
     const groups = await fetchManifest(IMAGES_FOLDER);
     const mainOrder = await getMainOrder();

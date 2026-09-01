@@ -47,7 +47,7 @@ function renderAbout(data){
 }
 
 (async function init(){
-  initSiteNav({ homeHref: '../', aboutHref: './', activeKey: 'about' });
+  initSiteNav({ homeHref: '../', aboutHref: './', caseHref: '../case/', activeKey: 'about' });
   try {
     const data = await fetchAboutContent();
     renderAbout(data);
