@@ -783,6 +783,49 @@ const AdminUI = (() => {
     addHighlightBtn.textContent = '+ 카드 추가';
     addHighlightBtn.addEventListener('click', () => addHighlightRow('', ''));
 
+    // 기획/제작/시공 카드 아래 사진 격자 - 기존에 올려둔 시공 사례 중에서 골라 담음
+    const galleryListEl = document.createElement('div');
+    galleryListEl.className = 'about-gallery-list';
+
+    function addGalleryRow(groupSlug = ''){
+      const row = document.createElement('div');
+      row.className = 'about-gallery-row';
+
+      const select = document.createElement('select');
+      const emptyOpt = document.createElement('option');
+      emptyOpt.value = '';
+      emptyOpt.textContent = '사진을 고르세요';
+      select.appendChild(emptyOpt);
+      allGroups.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.slug;
+        opt.textContent = g.title;
+        if (g.slug === groupSlug) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.className = 'secondary';
+      removeBtn.textContent = '× 이 사진 삭제';
+      removeBtn.addEventListener('click', () => row.remove());
+
+      row.append(select, removeBtn);
+      galleryListEl.appendChild(row);
+    }
+    (aboutData.gallery && aboutData.gallery.length ? aboutData.gallery : [{ group: '' }])
+      .forEach(item => addGalleryRow(item.group));
+
+    const addGalleryBtn = document.createElement('button');
+    addGalleryBtn.type = 'button';
+    addGalleryBtn.className = 'secondary';
+    addGalleryBtn.textContent = '+ 사진 추가';
+    addGalleryBtn.addEventListener('click', () => addGalleryRow(''));
+
+    const galleryHint = document.createElement('p');
+    galleryHint.className = 'hint';
+    galleryHint.textContent = '시공 사례에 이미 올려둔 사진 중에서 골라 담습니다. 화면에는 3칸씩(모바일은 2칸) 순서대로 나타나며, 몇 장을 담든 상관없습니다.';
+
     const saveBtn = document.createElement('button');
     saveBtn.textContent = '회사소개 저장';
 
@@ -802,7 +845,15 @@ const AdminUI = (() => {
             title: row.querySelector('input').value.trim(),
             desc: row.querySelector('textarea').value.trim()
           }))
-          .filter(h => h.title)
+          .filter(h => h.title),
+        gallery: Array.from(galleryListEl.querySelectorAll('.about-gallery-row select'))
+          .map(sel => sel.value)
+          .filter(Boolean)
+          .map(slug => {
+            const group = allGroups.find(g => g.slug === slug);
+            return group ? { group: group.slug, file: group.cover } : null;
+          })
+          .filter(Boolean)
       };
 
       saveBtn.disabled = true;
@@ -837,6 +888,10 @@ const AdminUI = (() => {
       Object.assign(document.createElement('label'), { textContent: '강조 카드 (기획 · 제작 · 시공 등)' }),
       highlightListEl,
       addHighlightBtn,
+      Object.assign(document.createElement('label'), { textContent: '카드 아래 사진 격자' }),
+      galleryHint,
+      galleryListEl,
+      addGalleryBtn,
       saveBtn,
       statusEl
     );
@@ -848,10 +903,10 @@ const AdminUI = (() => {
   }
 
   // 로그인 성공 후 각 admin 페이지가 호출하는 진입점
-  function start(api){
+  async function start(api){
     wireNewGroupUpload(api);
     document.getElementById('refreshBtn').addEventListener('click', () => loadGroups(api));
-    loadGroups(api);
+    await loadGroups(api); // 회사소개의 사진 선택 드롭다운이 allGroups를 쓰므로 먼저 채워야 함
     loadAbout(api);
   }
 

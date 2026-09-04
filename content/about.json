@@ -10,5 +10,13 @@
     { "title": "기획", "desc": "브랜드와 공간을 먼저 이해하는 것에서 시작합니다." },
     { "title": "제작", "desc": "소재와 조명, 마감까지 직접 다루며 완성도를 관리합니다." },
     { "title": "시공", "desc": "현장 상황에 맞춰 안전하고 꼼꼼하게 마무리합니다." }
+  ],
+  "gallery": [
+    { "group": "aiola-flower", "file": "AIOLA FLOWER.jpg" },
+    { "group": "anduril", "file": "ANDURIL.jpg" },
+    { "group": "iceberg", "file": "ICEBERG.jpg" },
+    { "group": "mb3", "file": "MB3.jpg" },
+    { "group": "mood", "file": "MOOD.jpg" },
+    { "group": "often", "file": "OFTEN.jpg" }
   ]
 }

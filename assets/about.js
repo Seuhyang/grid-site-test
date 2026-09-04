@@ -42,6 +42,21 @@ function renderAbout(data){
     highlightsEl.appendChild(card);
   });
 
+  const galleryEl = document.getElementById('aboutGallery');
+  galleryEl.innerHTML = '';
+  (data.gallery || []).forEach(item => {
+    if (!item || !item.file) return;
+    const cell = document.createElement('div');
+    cell.className = 'gallery-photo reveal-block';
+    const img = document.createElement('img');
+    img.src = `../images/${item.file}`;
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    img.alt = item.group || '';
+    cell.appendChild(img);
+    galleryEl.appendChild(cell);
+  });
+
   const observer = createRevealObserver();
   document.querySelectorAll('.reveal-block').forEach(el => wireLazyReveal(el, observer));
 }
