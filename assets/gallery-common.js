@@ -141,19 +141,24 @@ function initSiteNav({ homeHref, aboutHref, caseHref, activeKey }){
     contactLi.appendChild(a);
   });
 
-  // 다크모드 전환 버튼 - 상담문의/아이콘 묶음 안에 같이 넣음
+  ul.appendChild(contactLi);
+
+  // 다크모드 전환 버튼 - 상담문의(카카오/인스타그램)와는 역할이 다르므로
+  // 같은 묶음에 넣지 않고 별도 칸으로 분리
+  const themeLi = document.createElement('li');
+  themeLi.className = 'nav-theme-toggle-wrap';
+
   const themeBtn = document.createElement('button');
   themeBtn.type = 'button';
-  themeBtn.className = 'nav-icon nav-theme-toggle';
+  themeBtn.className = 'nav-theme-toggle';
   themeBtn.setAttribute('aria-label', '다크모드 전환');
   themeBtn.addEventListener('click', () => {
     const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
     setTheme(next);
   });
-  contactLi.appendChild(themeBtn);
+  themeLi.appendChild(themeBtn);
   updateThemeButtonIcon(themeBtn);
-
-  ul.appendChild(contactLi);
+  ul.appendChild(themeLi);
 
   // 모바일에서 항목 하나를 탭하면 메뉴가 자동으로 닫히게 (다크모드 버튼은 예외 - 눌러도 메뉴 유지)
   ul.addEventListener('click', (e) => {
